@@ -114,6 +114,23 @@ def logout():
 @login_required
 def quote():
     """Get stock quote."""
+    
+    if request.method == "POST":
+
+        symbol = request.form.get("symbol")
+        
+        # Ensure username was submitted
+        if not symbol:
+            return apology("must provide valid stock name", 403)
+        print(lookup(symbol))
+        # Redirect user to login
+        return render_template("quoted.html")
+
+    # User reached route via GET (as by clicking a link or via redirect)
+    else:
+        return render_template("quote.html")
+    
+    
     return apology("TODO")
 
 
@@ -143,10 +160,6 @@ def register():
         print(check_password_hash(pwhash, password))
         # Insert username and hash to database
         db.execute("INSERT INTO users(username, hash) VALUES (?, ?)", username, conhash)
-
-        # Insert password to database
-        # if len(rows) != 1 or not check_password_hash(rows[0]["hash"], request.form.get("password")):
-            # ("invalid username and/or password", 403)
 
         # Redirect user to login
         return redirect("/login")
