@@ -123,19 +123,26 @@ def register():
     
     if request.method == "POST":
 
-        # Ensure username was submitted
-        # if not request.form.post("username"):
-            # return apology("must provide username", 403)
-
-        # Ensure password was submitted
-        # elif not request.form.post("password"):
-            # return apology("must provide password", 403)
         username = request.form.get("username")
         password = request.form.get("password")
-        pwhash = generate_password_hash(password, method='pbkdf2:sha256', salt_length=8)
+        confirmation = request.form.get("confirmation")
+        pwhash = generate_password_hash(confirmation, method='pbkdf2:sha256', salt_length=8)
+        conhash = generate_password_hash(confirmation, method='pbkdf2:sha256', salt_length=8)
+        # Ensure username was submitted
+        if not username:
+            return apology("must provide username", 403)
+
+        # Ensure password was submitted
+        elif not password:
+            return apology("must provide password", 403)
+            
+        # Ensure password confirmation are matching
+        elif password != confirmation:
+            return apology("must match password", 403)
+            
         print(check_password_hash(pwhash, password))
         # Insert username and hash to database
-        db.execute("INSERT INTO users(username, hash) VALUES (?, ?)", username, pwhash)
+        db.execute("INSERT INTO users(username, hash) VALUES (?, ?)", username, conhash)
 
         # Insert password to database
         # if len(rows) != 1 or not check_password_hash(rows[0]["hash"], request.form.get("password")):
