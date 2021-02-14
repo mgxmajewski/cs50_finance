@@ -132,8 +132,10 @@ def register():
             # return apology("must provide password", 403)
         username = request.form.get("username")
         password = request.form.get("password")
+        pwhash = generate_password_hash(password, method='pbkdf2:sha256', salt_length=8)
+        print(check_password_hash(pwhash, password))
         # Insert username and hash to database
-        db.execute("INSERT INTO users(username, hash) VALUES (?, ?)", username, password)
+        db.execute("INSERT INTO users(username, hash) VALUES (?, ?)", username, pwhash)
 
         # Insert password to database
         # if len(rows) != 1 or not check_password_hash(rows[0]["hash"], request.form.get("password")):
