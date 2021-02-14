@@ -121,9 +121,31 @@ def quote():
 def register():
     """Register user"""
     
-    
-    return render_template("register.html")
+    if request.method == "POST":
 
+        # Ensure username was submitted
+        # if not request.form.post("username"):
+            # return apology("must provide username", 403)
+
+        # Ensure password was submitted
+        # elif not request.form.post("password"):
+            # return apology("must provide password", 403)
+        username = request.form.get("username")
+        password = request.form.get("password")
+        # Insert username and hash to database
+        db.execute("INSERT INTO users(username, hash) VALUES (?, ?)", username, password)
+
+        # Insert password to database
+        # if len(rows) != 1 or not check_password_hash(rows[0]["hash"], request.form.get("password")):
+            # ("invalid username and/or password", 403)
+
+        # Redirect user to login
+        return redirect("/login")
+
+    # User reached route via GET (as by clicking a link or via redirect)
+    else:
+        return render_template("register.html")
+    
 
 @app.route("/sell", methods=["GET", "POST"])
 @login_required
