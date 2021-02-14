@@ -122,9 +122,9 @@ def quote():
         # Ensure username was submitted
         if not symbol:
             return apology("must provide valid stock name", 403)
-        print(lookup(symbol))
+        quote = lookup(symbol)
         # Redirect user to login
-        return render_template("quoted.html")
+        return render_template("quoted.html", quote=quote)
 
     # User reached route via GET (as by clicking a link or via redirect)
     else:
