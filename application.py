@@ -129,9 +129,13 @@ def quote():
         iex_symbol = quote['symbol']
         iex_name = quote['name']
         iex_price = usd(quote['price'])
+        user_id = session['user_id']
+        user_db_imported = db.execute("SELECT username FROM users WHERE id = :user_id ", user_id = user_id)
+        user_name = user_db_imported[0]['username']
+    
         
         # Redirect user to login
-        return render_template("quoted.html", iex_symbol=iex_symbol, iex_name=iex_name, iex_price=iex_price)
+        return render_template("quoted.html", iex_symbol=iex_symbol, iex_name=iex_name, iex_price=iex_price, user_name=user_name)
 
     # User reached route via GET (as by clicking a link or via redirect)
     else:
