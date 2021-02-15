@@ -6,6 +6,24 @@
 
 {% block main %}
     <div>
-        <h1>{{quote}}</h1>
+        <h1>Your quote</h1>
+        <table style="width:100%" class="table">
+            <thead>
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">Symbol</th>
+                <th scope="col">Company name</th>
+                <th scope="col">Stock price</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row">1</th>
+                <td>{{iex_symbol}}</td>
+                <td>{{iex_name}}</td>
+                <td>{{iex_price}}</td>
+              </tr>
+            </tbody>
+        </table>
     </div>
 {% endblock %}

@@ -118,13 +118,20 @@ def quote():
     if request.method == "POST":
 
         symbol = request.form.get("symbol")
-        
+        quote = lookup(symbol)
         # Ensure username was submitted
         if not symbol:
             return apology("must provide valid stock name", 403)
-        quote = lookup(symbol)
+        elif quote == None:
+            return apology("Sorry, no such a stock", 403)
+        
+        print(quote)
+        iex_symbol = quote['symbol']
+        iex_name = quote['name']
+        iex_price = usd(quote['price'])
+        
         # Redirect user to login
-        return render_template("quoted.html", quote=quote)
+        return render_template("quoted.html", iex_symbol=iex_symbol, iex_name=iex_name, iex_price=iex_price)
 
     # User reached route via GET (as by clicking a link or via redirect)
     else:
