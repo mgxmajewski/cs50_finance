@@ -80,7 +80,7 @@ def buy():
 
         print(balance_after_trans)
 
-        db.execute("INSERT INTO stocks(symbol, company_name) VALUES (:symbol, :company_name)", symbol=symbol, company_name=iex_name)
+        db.execute("INSERT OR IGNORE INTO stocks(symbol, company_name) VALUES (:symbol, :company_name)", symbol=symbol, company_name=iex_name)
 
         # Ensure order of stock was valid
         if not symbol:
