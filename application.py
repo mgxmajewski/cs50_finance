@@ -58,7 +58,15 @@ def index():
     user_name = user_db_import[0]['username']
 
     user_stock_list = db.execute("SELECT transactions.stock, stocks.symbol, stocks.company_name, sum(transactions.shares) FROM transactions JOIN stocks ON stocks.id = transactions.stock WHERE buyer=:user_id GROUP BY stock", user_id=user_id)
+    
     print(user_stock_list)
+    
+    for stock in user_stock_list:
+        stock_quote = lookup(stock['symbol'])
+        stock_actual_price = stock_quote['price']
+        stock_total_value = stock['sum(transactions.shares)'] * stock_actual_price
+        print(stock_total_value)    
+    
 
     # Redirect user to login
     return render_template("index.html", 
