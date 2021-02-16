@@ -82,16 +82,16 @@ def buy():
 
         db.execute("INSERT OR IGNORE INTO stocks(symbol, company_name) VALUES (:symbol, :company_name)", symbol=iex_symbol, company_name=iex_name)
         
-        stock_db_id = db.execute("SELECT id FROM stocks WHERE symbol = ?", iex_symbol)[0]['id']
-        print(stock_db_id)
-        
-        # stock_db_id = db.execute("SELECT id FROM stocks WHERE symbol=:symbol", symbol=symbol)
-        # buyer_db_id = db.execute("SELECT id FROM users WHERE symbol=:symbol", symbol=symbol)
-                
-        db.execute("INSERT INTO transactions (stock, buyer, seller, shares, price) VALUES (:stock, :buyer, :seller, :shares, :price)", stock=stock_db_id, buyer=user_id, seller=seller_id, shares=shares, price=iex_price)
-        
-        db.execute("UPDATE users SET cash= ? WHERE id= ? ", balance_after_trans, user_id)
+        # Ensure that 
+        if  balance >= stock_purchase_value:
+            stock_db_id = db.execute("SELECT id FROM stocks WHERE symbol = ?", iex_symbol)[0]['id']
+            print(stock_db_id)
+            
+            db.execute("INSERT INTO transactions (stock, buyer, seller, shares, price) VALUES (?, ?, ?, ?, ?)", stock_db_id, user_id, seller_id, shares, iex_price)
+            
+            db.execute("UPDATE users SET cash= ? WHERE id= ? ", balance_after_trans, user_id)
         # Ensure order of stock was valid
+        
         if not symbol:
             return apology("must provide valid stock name", 403)
         elif symbol == None:
