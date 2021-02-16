@@ -57,7 +57,7 @@ def index():
     user_db_import = db.execute("SELECT username FROM users WHERE id = :user_id ", user_id = user_id)
     user_name = user_db_import[0]['username']
 
-    user_stock_list = db.execute("SELECT stock, sum(shares) FROM transactions WHERE buyer=:user_id GROUP BY stock", user_id=user_id)
+    user_stock_list = db.execute("SELECT transactions.stock, stocks.symbol, stocks.company_name, sum(transactions.shares) FROM transactions JOIN stocks ON stocks.id = transactions.stock WHERE buyer=:user_id GROUP BY stock", user_id=user_id)
     print(user_stock_list)
 
     # Redirect user to login
