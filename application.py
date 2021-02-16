@@ -46,16 +46,30 @@ if not os.environ.get("API_KEY"):
 @login_required
 def index():
     """Show portfolio of stocks"""
-    return apology("TODO")
+    
+    quote = lookup('AAPL')
+    print(quote)
+    iex_symbol = quote['symbol']
+    iex_name = quote['name']
+    iex_price = usd(quote['price'])
+    user_id = session['user_id']
+    user_db_import = db.execute("SELECT username FROM users WHERE id = :user_id ", user_id = user_id)
+    user_name = user_db_import[0]['username']
+
+
+    # Redirect user to login
+    return render_template("index.html", 
+                            iex_symbol=iex_symbol, 
+                            iex_name=iex_name, 
+                            iex_price=iex_price, 
+                            user_name=user_name)
+
 
 
 @app.route("/buy", methods=["GET", "POST"])
 @login_required
 def buy():
     """Buy shares of stock"""
-
-
-
 
     if request.method == "POST":
 
