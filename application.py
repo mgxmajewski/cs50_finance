@@ -11,7 +11,7 @@ from helpers import apology, login_required, lookup, usd
 
 # Configure application
 app = Flask(__name__)
- 
+
 # Ensure templates are auto-reloaded
 app.config["TEMPLATES_AUTO_RELOAD"] = True
 
@@ -53,7 +53,54 @@ def index():
 @login_required
 def buy():
     """Buy shares of stock"""
-    return apology("TODO")
+
+
+    
+
+    if request.method == "POST":
+
+
+        
+        user_id = session['user_id']
+        user_name = db.execute("SELECT username FROM users WHERE id = :user_id ", user_id = user_id)[0]['username']
+        balance = db.execute("SELECT cash FROM users WHERE id = :user_id", user_id = user_id)[0]['cash']
+        symbol = request.form.get("symbol")
+        shares = int(request.form.get("shares"))
+
+        stock_import = lookup(symbol)
+
+        stock_purchase_value = lookup(symbol)
+
+        iex_symbol = stock_import['symbol']
+        iex_name = stock_import['name']
+        iex_price = stock_import['price']
+        
+        print(type(iex_price))
+        print(shares)        
+        print(type(shares))
+        
+        stock_purchase_value = iex_price * shares
+        print(type(stock_purchase_value))
+        print(stock_purchase_value)
+        print(balance)
+
+        # Ensure order of stock was valid
+        if not symbol:
+            return apology("must provide valid stock name", 403)
+        elif symbol == None:
+            return apology("Sorry, no such a stock", 403)
+        elif balance < stock_purchase_value:
+            return apology("Sorry, you dont have enough cash", 403)
+
+
+        # Redirect user to login
+        return redirect("/")
+
+    # User reached route via GET (as by clicking a link or via redirect)
+    else:
+        return render_template("buy.html")
+
+
 
 
 @app.route("/history")
@@ -114,7 +161,7 @@ def logout():
 @login_required
 def quote():
     """Get stock quote."""
-    
+
     if request.method == "POST":
 
         symbol = request.form.get("symbol")
@@ -124,31 +171,31 @@ def quote():
             return apology("must provide valid stock name", 403)
         elif quote == None:
             return apology("Sorry, no such a stock", 403)
-        
+
         print(quote)
         iex_symbol = quote['symbol']
         iex_name = quote['name']
         iex_price = usd(quote['price'])
         user_id = session['user_id']
-        user_db_imported = db.execute("SELECT username FROM users WHERE id = :user_id ", user_id = user_id)
-        user_name = user_db_imported[0]['username']
-    
-        
+        user_db_import = db.execute("SELECT username FROM users WHERE id = :user_id ", user_id = user_id)
+        user_name = user_db_import[0]['username']
+
+
         # Redirect user to login
         return render_template("quoted.html", iex_symbol=iex_symbol, iex_name=iex_name, iex_price=iex_price, user_name=user_name)
 
     # User reached route via GET (as by clicking a link or via redirect)
     else:
         return render_template("quote.html")
-    
-    
+
+
     return apology("TODO")
 
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
     """Register user"""
-    
+
     if request.method == "POST":
 
         username = request.form.get("username")
@@ -163,11 +210,11 @@ def register():
         # Ensure password was submitted
         elif not password:
             return apology("must provide password", 403)
-            
+
         # Ensure password confirmation are matching
         elif password != confirmation:
             return apology("must match password", 403)
-            
+
         print(check_password_hash(pwhash, password))
         # Insert username and hash to database
         db.execute("INSERT INTO users(username, hash) VALUES (?, ?)", username, conhash)
@@ -178,7 +225,7 @@ def register():
     # User reached route via GET (as by clicking a link or via redirect)
     else:
         return render_template("register.html")
-    
+
 
 @app.route("/sell", methods=["GET", "POST"])
 @login_required
