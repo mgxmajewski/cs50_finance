@@ -47,6 +47,7 @@ if not os.environ.get("API_KEY"):
 def index():
     """Show portfolio of stocks"""
     
+
     quote = lookup('AAPL')
     print(quote)
     iex_symbol = quote['symbol']
@@ -56,6 +57,8 @@ def index():
     user_db_import = db.execute("SELECT username FROM users WHERE id = :user_id ", user_id = user_id)
     user_name = user_db_import[0]['username']
 
+    user_stock_list = db.execute("SELECT stock, sum(shares) FROM transactions WHERE buyer=:user_id GROUP BY stock", user_id=user_id)
+    print(user_stock_list)
 
     # Redirect user to login
     return render_template("index.html", 
@@ -95,6 +98,7 @@ def buy():
         print(user_id)
 
         db.execute("INSERT OR IGNORE INTO stocks(symbol, company_name) VALUES (:symbol, :company_name)", symbol=iex_symbol, company_name=iex_name)
+        
         
         # Ensure that 
         if  balance >= stock_purchase_value:
