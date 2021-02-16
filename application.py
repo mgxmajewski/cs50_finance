@@ -65,7 +65,8 @@ def index():
         stock_quote = lookup(stock['symbol'])
         stock_actual_price = stock_quote['price']
         stock_total_value = stock['sum(transactions.shares)'] * stock_actual_price
-        print(stock_total_value)    
+        stock['total']= stock_total_value
+        print(stock)
     
 
     # Redirect user to login
@@ -73,7 +74,8 @@ def index():
                             iex_symbol=iex_symbol, 
                             iex_name=iex_name, 
                             iex_price=iex_price, 
-                            user_name=user_name)
+                            user_name=user_name, 
+                            user_stock_list=user_stock_list)
 
 
 

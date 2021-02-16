@@ -6,7 +6,7 @@
 
 {% block main %}
     <div>
-        <h1>{{user_name}}, here is your quote:</h1>
+        <h1>{{user_name}}, here is list of your assets:</h1>
         <table style="width:100%" class="table">
             <thead>
               <tr>
@@ -14,6 +14,8 @@
                 <th scope="col">Symbol</th>
                 <th scope="col">Company name</th>
                 <th scope="col">Stock price</th>
+                <th scope="col">TOTAL</th>
+                
               </tr>
             </thead>
             <tbody>
@@ -25,5 +27,10 @@
               </tr>
             </tbody>
         </table>
+    </div>
+    <div>
+      {% for stock in user_stock_list %}
+      <li>{{stock}}</li>
+      {% endfor %}
     </div>
 {% endblock %}
