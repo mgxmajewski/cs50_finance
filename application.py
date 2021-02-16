@@ -61,14 +61,13 @@ def buy():
 
 
         user_id = session['user_id']
+        seller_id = db.execute("SELECT id FROM users WHERE username = 'broker' ")[0]['id']
         user_name = db.execute("SELECT username FROM users WHERE id = :user_id ", user_id = user_id)[0]['username']
         balance = db.execute("SELECT cash FROM users WHERE id = :user_id", user_id = user_id)[0]['cash']
         symbol = request.form.get("symbol")
         shares = int(request.form.get("shares"))
 
         stock_import = lookup(symbol)
-
-        stock_purchase_value = lookup(symbol)
 
         iex_symbol = stock_import['symbol']
         iex_name = stock_import['name']
@@ -79,9 +78,19 @@ def buy():
         balance_after_trans = balance - stock_purchase_value
 
         print(balance_after_trans)
+        print(user_id)
 
-        db.execute("INSERT OR IGNORE INTO stocks(symbol, company_name) VALUES (:symbol, :company_name)", symbol=symbol, company_name=iex_name)
-
+        db.execute("INSERT OR IGNORE INTO stocks(symbol, company_name) VALUES (:symbol, :company_name)", symbol=iex_symbol, company_name=iex_name)
+        
+        stock_db_id = db.execute("SELECT id FROM stocks WHERE symbol = ?", iex_symbol)[0]['id']
+        print(stock_db_id)
+        
+        # stock_db_id = db.execute("SELECT id FROM stocks WHERE symbol=:symbol", symbol=symbol)
+        # buyer_db_id = db.execute("SELECT id FROM users WHERE symbol=:symbol", symbol=symbol)
+                
+        db.execute("INSERT INTO transactions (stock, buyer, seller, shares, price) VALUES (:stock, :buyer, :seller, :shares, :price)", stock=stock_db_id, buyer=user_id, seller=seller_id, shares=shares, price=iex_price)
+        
+        db.execute("UPDATE users")
         # Ensure order of stock was valid
         if not symbol:
             return apology("must provide valid stock name", 403)
@@ -89,7 +98,6 @@ def buy():
             return apology("Sorry, no such a stock", 403)
         elif balance < stock_purchase_value:
             return apology("Sorry, you dont have enough cash", 403)
-
 
         # Redirect user to login
         return redirect("/")
