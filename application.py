@@ -55,12 +55,11 @@ def buy():
     """Buy shares of stock"""
 
 
-    
+
 
     if request.method == "POST":
 
 
-        
         user_id = session['user_id']
         user_name = db.execute("SELECT username FROM users WHERE id = :user_id ", user_id = user_id)[0]['username']
         balance = db.execute("SELECT cash FROM users WHERE id = :user_id", user_id = user_id)[0]['cash']
@@ -74,15 +73,14 @@ def buy():
         iex_symbol = stock_import['symbol']
         iex_name = stock_import['name']
         iex_price = stock_import['price']
-        
-        print(type(iex_price))
-        print(shares)        
-        print(type(shares))
-        
+
         stock_purchase_value = iex_price * shares
-        print(type(stock_purchase_value))
-        print(stock_purchase_value)
-        print(balance)
+
+        balance_after_trans = balance - stock_purchase_value
+
+        print(balance_after_trans)
+
+        db.execute("INSERT INTO stocks(symbol, company_name) VALUES (:symbol, :company_name)", symbol=symbol, company_name=iex_name)
 
         # Ensure order of stock was valid
         if not symbol:
