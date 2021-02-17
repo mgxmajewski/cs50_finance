@@ -93,14 +93,31 @@ def buy():
 
 
         user_id = session['user_id']
-        seller_id = db.execute("SELECT id FROM users WHERE username = 'broker' ")[0]['id']
         user_name = db.execute("SELECT username FROM users WHERE id = :user_id ", user_id = user_id)[0]['username']
         balance = db.execute("SELECT cash FROM users WHERE id = :user_id", user_id = user_id)[0]['cash']
         symbol = request.form.get("symbol")
-        shares = int(request.form.get("shares"))
-
+        shares = request.form.get("shares")
+        
+        print(symbol)
+        
+        # Validate symbol
+        if not symbol:
+            return apology("must provide valid stock name", 400)
+        elif symbol == None:
+            return apology("Sorry, no such a stock", 400)
+            
+        # Validate shares
+        if not shares.isdigit():
+            return apology("You must provide positive integer", 400)
+        else:
+            shares = int(shares)
+        
         stock_import = lookup(symbol)
-
+        
+        # Validate ticker symbol is
+        if stock_import == None:
+            return apology("Sorry, ticker symbol invalid", 400)
+        
         iex_symbol = stock_import['symbol']
         iex_name = stock_import['name']
         iex_price = stock_import['price']
@@ -115,24 +132,17 @@ def buy():
         db.execute("INSERT OR IGNORE INTO stocks(symbol, company_name) VALUES (:symbol, :company_name)", symbol=iex_symbol, company_name=iex_name)
         
 
-        # Ensure that
+        # Validate user cash balance
         if  balance >= stock_purchase_value:
             stock_db_id = db.execute("SELECT id FROM stocks WHERE symbol = ?", iex_symbol)[0]['id']
-            print(stock_db_id)
 
             db.execute("INSERT INTO transactions (stock_id, user_id, shares, price) VALUES (?, ?, ?, ?)", stock_db_id, user_id, shares, iex_price)
 
             db.execute("UPDATE users SET cash= ? WHERE id= ? ", balance_after_trans, user_id)
-        # Ensure order of stock was valid
-
-        if not symbol:
-            return apology("must provide valid stock name", 400)
-        elif symbol == None:
-            return apology("Sorry, no such a stock", 400)
-        elif balance < stock_purchase_value:
+        else:
             return apology("Sorry, you dont have enough cash", 400)
 
-        # Redirect user to login
+        # Redirect user index.html
         return redirect("/")
 
     # User reached route via GET (as by clicking a link or via redirect)
@@ -207,9 +217,9 @@ def quote():
         quote = lookup(symbol)
         # Ensure username was submitted
         if not symbol:
-            return apology("must provide valid stock name", 403)
+            return apology("must provide valid stock name", 400)
         elif quote == None:
-            return apology("Sorry, no such a stock", 403)
+            return apology("Sorry, no such a stock", 400)
 
         iex_symbol = quote['symbol']
         iex_name = quote['name']

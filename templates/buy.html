@@ -1,11 +1,11 @@
-+{% extends "layout.html" %}
+{% extends "layout.html" %}
 
 {% block title %}
     Log In
 {% endblock %}
 
 {% block main %}
-    <form action="/buy" method="post">
+    <form novalidate action="/buy" method="post" >
         <div class="form-group">
             <input autocomplete="off" autofocus class="form-control" name="symbol" placeholder="Stock name" type="text">
         </div>
