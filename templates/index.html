@@ -19,18 +19,19 @@
               </tr>
             </thead>
             <tbody>
+              {% for stock in user_stock_list %}
               <tr>
-                <th scope="row">1</th>
-                <td>{{iex_symbol}}</td>
-                <td>{{iex_name}}</td>
-                <td>{{iex_price}}</td>
+                <th scope="row">{{ loop.index }}</th>
+                <td>{{stock['symbol']}}</td>
+                <td>{{stock['company_name']}}</td>
+                <td>{{stock['sum(transactions.shares)']}}</td>
+                <td>{{stock['total']}}</td>
               </tr>
+              {% endfor %}
             </tbody>
         </table>
     </div>
     <div>
-      {% for stock in user_stock_list %}
-      <li>{{stock}}</li>
-      {% endfor %}
+      
     </div>
 {% endblock %}
