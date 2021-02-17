@@ -58,7 +58,7 @@ def index():
     user_name = user_db_import[0]['username']
 
     #
-    user_shares = db.execute("SELECT transactions.stock, stocks.symbol, stocks.company_name, sum(transactions.shares) FROM transactions JOIN stocks ON stocks.id = transactions.stock WHERE buyer=:user_id GROUP BY stock", user_id=user_id)
+    user_shares = db.execute("SELECT transactions.stock_id, stocks.symbol, stocks.company_name, sum(transactions.shares) FROM transactions JOIN stocks ON stocks.id = transactions.stock_id WHERE user_id=:user_id GROUP BY stock_id", user_id=user_id)
 
     # Create list of dictionaries for html render
     for stock in user_shares:
@@ -134,7 +134,7 @@ def buy():
             stock_db_id = db.execute("SELECT id FROM stocks WHERE symbol = ?", iex_symbol)[0]['id']
             print(stock_db_id)
 
-            db.execute("INSERT INTO transactions (stock, buyer, seller, shares, price) VALUES (?, ?, ?, ?, ?)", stock_db_id, user_id, seller_id, shares, iex_price)
+            db.execute("INSERT INTO transactions (stock_id, user_id, shares, price) VALUES (?, ?, ?, ?)", stock_db_id, user_id, shares, iex_price)
 
             db.execute("UPDATE users SET cash= ? WHERE id= ? ", balance_after_trans, user_id)
         # Ensure order of stock was valid
