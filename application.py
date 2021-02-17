@@ -303,7 +303,22 @@ def sell():
     if request.method == "POST":
         
         stock_to_sell = request.form.get("symbol")
-        print('sell', stock_to_sell)
+        shares = request.form.get("shares")
+    
+    
+        # Validate shares
+        if not shares.isdigit():
+            return apology("You must provide positive integer", 400)
+        else:
+            shares = int(shares)
+        
+        # Calculate stock
+        shares_available_to_sell = db.execute("SELECT sum(transactions.shares) FROM transactions JOIN stocks ON stocks.id = transactions.stock_id WHERE user_id=:user_id GROUP BY stock_id", user_id=user_id)
+        
+        print(shares_available_to_sell)
+        
+        
+        
         
     else:
         return render_template("sell.html", user_stocks=user_stocks)
