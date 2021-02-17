@@ -293,15 +293,20 @@ def sell():
     """Sell shares of stock"""
     
     user_id = session['user_id']
-    
     user_shares = db.execute("SELECT transactions.stock_id, stocks.symbol, stocks.company_name, sum(transactions.shares) FROM transactions JOIN stocks ON stocks.id = transactions.stock_id WHERE user_id=:user_id GROUP BY stock_id", user_id=user_id)
     
     user_stocks = []
-    
+
     for stocks in user_shares:
         user_stocks.append(stocks['symbol'])
     
-    return render_template("sell.html", user_stocks=user_stocks)
+    if request.method == "POST":
+        
+        stock_to_sell = request.form.get("symbol")
+        print('sell', stock_to_sell)
+        
+    else:
+        return render_template("sell.html", user_stocks=user_stocks)
 
 
 def errorhandler(e):
