@@ -47,12 +47,6 @@ if not os.environ.get("API_KEY"):
 def index():
     """Show portfolio of stocks"""
 
-
-    quote = lookup('AAPL')
-    print(quote)
-    iex_symbol = quote['symbol']
-    iex_name = quote['name']
-    iex_price = usd(quote['price'])
     user_id = session['user_id']
     user_db_import = db.execute("SELECT username FROM users WHERE id = :user_id ", user_id = user_id)
     user_name = user_db_import[0]['username']
@@ -80,21 +74,13 @@ def index():
     # Calculate total value of the wallet
     total_wallet_value = value_of_all_stocks + balance
     
-    # Cconverts to USD
+    # Convert to USD
     balance_usd = usd(balance)
     total_wallet_value_usd = usd(total_wallet_value)
     value_of_all_stocks_usd = usd(value_of_all_stocks)
     
-    # Redirect user to login
-    return render_template("index.html",
-                            iex_symbol=iex_symbol,
-                            iex_name=iex_name,
-                            iex_price=iex_price,
-                            user_name=user_name,
-                            user_shares=user_shares,
-                            value_of_all_stocks_usd=value_of_all_stocks_usd,
-                            balance_usd=balance_usd,
-                            total_wallet_value_usd=total_wallet_value_usd)
+    # Render index.html
+    return render_template("index.html", user_shares=user_shares, value_of_all_stocks_usd=value_of_all_stocks_usd, balance_usd=balance_usd, total_wallet_value_usd=total_wallet_value_usd)
 
 
 
@@ -140,11 +126,11 @@ def buy():
         # Ensure order of stock was valid
 
         if not symbol:
-            return apology("must provide valid stock name", 403)
+            return apology("must provide valid stock name", 400)
         elif symbol == None:
-            return apology("Sorry, no such a stock", 403)
+            return apology("Sorry, no such a stock", 400)
         elif balance < stock_purchase_value:
-            return apology("Sorry, you dont have enough cash", 403)
+            return apology("Sorry, you dont have enough cash", 400)
 
         # Redirect user to login
         return redirect("/")
@@ -182,7 +168,7 @@ def login():
             return apology("must provide password", 403)
 
         # Query database for username
-        rows = db.execute("SELECT * FROM users WHERE username = ?", request.form.get("username"))
+        rows = db.execute("SELECT * FROM users WHERE username = :username", username=request.form.get("username"))
 
         # Ensure username exists and password is correct
         if len(rows) != 1 or not check_password_hash(rows[0]["hash"], request.form.get("password")):
@@ -190,7 +176,7 @@ def login():
 
         # Remember which user has logged in
         session["user_id"] = rows[0]["id"]
-
+        
         # Redirect user to home page
         return redirect("/")
 
@@ -225,7 +211,6 @@ def quote():
         elif quote == None:
             return apology("Sorry, no such a stock", 403)
 
-        print(quote)
         iex_symbol = quote['symbol']
         iex_name = quote['name']
         iex_price = usd(quote['price'])
@@ -255,25 +240,37 @@ def register():
         password = request.form.get("password")
         confirmation = request.form.get("confirmation")
         pwhash = generate_password_hash(confirmation, method='pbkdf2:sha256', salt_length=8)
-        conhash = generate_password_hash(confirmation, method='pbkdf2:sha256', salt_length=8)
         # Ensure username was submitted
+        
+        user_db_import = db.execute("SELECT username FROM users")
+        
+        user_names = []
+        for users in user_db_import:
+            user_names.append(users['username'])
+        
+        # print(user_names)
+        # user_name_check_unique = user_db_import[0]['username']
+        
+        if username in user_names:
+            return apology("must provide uniquw username", 400)
+        
         if not username:
-            return apology("must provide username", 403)
+            return apology("must provide username", 400)
 
         # Ensure password was submitted
         elif not password:
-            return apology("must provide password", 403)
+            return apology("must provide password", 400)
 
         # Ensure password confirmation are matching
         elif password != confirmation:
-            return apology("must match password", 403)
+            return apology("confirmation must match password", 400)
 
-        print(check_password_hash(pwhash, password))
+        # print(check_password_hash(pwhash, password))
         # Insert username and hash to database
-        db.execute("INSERT INTO users(username, hash) VALUES (?, ?)", username, conhash)
+        db.execute("INSERT INTO users(username, hash) VALUES (?, ?)", username, pwhash)
 
         # Redirect user to login
-        return redirect("/login")
+        return redirect("/")
 
     # User reached route via GET (as by clicking a link or via redirect)
     else:

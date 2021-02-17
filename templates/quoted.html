@@ -5,6 +5,8 @@
 {% endblock %}
 
 {% block main %}
+<main class="container p-5">
+    <p> A share of {{iex_name}} ({{iex_symbol}}) costs {{iex_price}}.</p>
     <div>
         <h1>{{user_name}}, here is your quote:</h1>
         <table style="width:100%" class="table">
@@ -26,4 +28,5 @@
             </tbody>
         </table>
     </div>
+</main>
 {% endblock %}
