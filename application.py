@@ -303,23 +303,26 @@ def sell():
     if request.method == "POST":
         
         stock_to_sell = request.form.get("symbol")
-        shares = request.form.get("shares")
+        shares_to_sell = request.form.get("shares")
     
+        # Validate stock to sell
+        if not stock_to_sell:
+            return apology("You must select stock name", 400)
+        elif stock_to_sell == None:
+            return apology("Sorry, no such a stock", 400)
     
         # Validate shares
-        if not shares.isdigit():
+        if not shares_to_sell.isdigit():
             return apology("You must provide positive integer", 400)
         else:
-            shares = int(shares)
+            shares_to_sell = int(shares_to_sell)
         
         # Calculate stock
-        shares_available_to_sell = db.execute("SELECT sum(transactions.shares) FROM transactions JOIN stocks ON stocks.id = transactions.stock_id WHERE user_id=:user_id GROUP BY stock_id", user_id=user_id)
+        shares_available = db.execute("SELECT sum(transactions.shares) FROM transactions JOIN stocks ON stocks.id = transactions.stock_id WHERE user_id=:user_id GROUP BY stock_id", user_id=user_id)[0]
         
-        print(shares_available_to_sell)
-        
-        
-        
-        
+        if shares_to_sell > shares_available['sum(transactions.shares)']:
+             return apology("Exceeded your amount of shares to sell", 400)
+
     else:
         return render_template("sell.html", user_stocks=user_stocks)
 
