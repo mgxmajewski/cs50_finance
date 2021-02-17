@@ -61,12 +61,17 @@ def index():
     
     print(user_stock_list)
     
+    
+    # Create list of dictionaries for html render
     for stock in user_stock_list:
         stock_quote = lookup(stock['symbol'])
         stock_actual_price = stock_quote['price']
         stock_total_value = stock['sum(transactions.shares)'] * stock_actual_price
-        stock['total']= stock_total_value
+        stock['price'] = usd(stock_actual_price)
+        stock['total']= usd(stock_total_value)
         print(stock)
+        
+    
     
 
     # Redirect user to login
