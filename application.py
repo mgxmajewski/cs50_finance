@@ -46,7 +46,7 @@ if not os.environ.get("API_KEY"):
 @login_required
 def index():
     """Show portfolio of stocks"""
-    
+
 
     quote = lookup('AAPL')
     print(quote)
@@ -58,10 +58,10 @@ def index():
     user_name = user_db_import[0]['username']
 
     user_stock_list = db.execute("SELECT transactions.stock, stocks.symbol, stocks.company_name, sum(transactions.shares) FROM transactions JOIN stocks ON stocks.id = transactions.stock WHERE buyer=:user_id GROUP BY stock", user_id=user_id)
-    
+
     print(user_stock_list)
-    
-    
+
+
     # Create list of dictionaries for html render
     for stock in user_stock_list:
         stock_quote = lookup(stock['symbol'])
@@ -69,18 +69,28 @@ def index():
         stock_total_value = stock['sum(transactions.shares)'] * stock_actual_price
         stock['price'] = usd(stock_actual_price)
         stock['total']= usd(stock_total_value)
+        stock['total_num'] = stock_total_value
         print(stock)
+
+
+    value_of_all_stocks = 0
+    for stock in user_stock_list:
+        value_of_all_stocks += stock['total_num']
+    
+    value_of_all_stocks = usd(value_of_all_stocks)
         
-    
-    
+    print('suma ', value_of_all_stocks)
+
+
 
     # Redirect user to login
-    return render_template("index.html", 
-                            iex_symbol=iex_symbol, 
-                            iex_name=iex_name, 
-                            iex_price=iex_price, 
-                            user_name=user_name, 
-                            user_stock_list=user_stock_list)
+    return render_template("index.html",
+                            iex_symbol=iex_symbol,
+                            iex_name=iex_name,
+                            iex_price=iex_price,
+                            user_name=user_name,
+                            user_stock_list=user_stock_list,
+                            value_of_all_stocks=value_of_all_stocks)
 
 
 
@@ -113,18 +123,18 @@ def buy():
         print(user_id)
 
         db.execute("INSERT OR IGNORE INTO stocks(symbol, company_name) VALUES (:symbol, :company_name)", symbol=iex_symbol, company_name=iex_name)
-        
-        
-        # Ensure that 
+
+
+        # Ensure that
         if  balance >= stock_purchase_value:
             stock_db_id = db.execute("SELECT id FROM stocks WHERE symbol = ?", iex_symbol)[0]['id']
             print(stock_db_id)
-            
+
             db.execute("INSERT INTO transactions (stock, buyer, seller, shares, price) VALUES (?, ?, ?, ?, ?)", stock_db_id, user_id, seller_id, shares, iex_price)
-            
+
             db.execute("UPDATE users SET cash= ? WHERE id= ? ", balance_after_trans, user_id)
         # Ensure order of stock was valid
-        
+
         if not symbol:
             return apology("must provide valid stock name", 403)
         elif symbol == None:
