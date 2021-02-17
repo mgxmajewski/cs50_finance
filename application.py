@@ -57,40 +57,44 @@ def index():
     user_db_import = db.execute("SELECT username FROM users WHERE id = :user_id ", user_id = user_id)
     user_name = user_db_import[0]['username']
 
-    user_stock_list = db.execute("SELECT transactions.stock, stocks.symbol, stocks.company_name, sum(transactions.shares) FROM transactions JOIN stocks ON stocks.id = transactions.stock WHERE buyer=:user_id GROUP BY stock", user_id=user_id)
-
-    print(user_stock_list)
-
+    #
+    user_shares = db.execute("SELECT transactions.stock, stocks.symbol, stocks.company_name, sum(transactions.shares) FROM transactions JOIN stocks ON stocks.id = transactions.stock WHERE buyer=:user_id GROUP BY stock", user_id=user_id)
 
     # Create list of dictionaries for html render
-    for stock in user_stock_list:
+    for stock in user_shares:
         stock_quote = lookup(stock['symbol'])
         stock_actual_price = stock_quote['price']
         stock_total_value = stock['sum(transactions.shares)'] * stock_actual_price
-        stock['price'] = usd(stock_actual_price)
-        stock['total']= usd(stock_total_value)
+        stock['price_usd'] = usd(stock_actual_price)
+        stock['total_usd']= usd(stock_total_value)
         stock['total_num'] = stock_total_value
-        print(stock)
 
-
+    # Calculate value of all stocks    
     value_of_all_stocks = 0
-    for stock in user_stock_list:
+    for stock in user_shares:
         value_of_all_stocks += stock['total_num']
     
-    value_of_all_stocks = usd(value_of_all_stocks)
-        
-    print('suma ', value_of_all_stocks)
-
-
-
+    # Get cash balance from db    
+    balance = db.execute("SELECT cash FROM users WHERE id = :user_id", user_id = user_id)[0]['cash']
+    
+    # Calculate total value of the wallet
+    total_wallet_value = value_of_all_stocks + balance
+    
+    # Cconverts to USD
+    balance_usd = usd(balance)
+    total_wallet_value_usd = usd(total_wallet_value)
+    value_of_all_stocks_usd = usd(value_of_all_stocks)
+    
     # Redirect user to login
     return render_template("index.html",
                             iex_symbol=iex_symbol,
                             iex_name=iex_name,
                             iex_price=iex_price,
                             user_name=user_name,
-                            user_stock_list=user_stock_list,
-                            value_of_all_stocks=value_of_all_stocks)
+                            user_shares=user_shares,
+                            value_of_all_stocks_usd=value_of_all_stocks_usd,
+                            balance_usd=balance_usd,
+                            total_wallet_value_usd=total_wallet_value_usd)
 
 
 
@@ -123,7 +127,7 @@ def buy():
         print(user_id)
 
         db.execute("INSERT OR IGNORE INTO stocks(symbol, company_name) VALUES (:symbol, :company_name)", symbol=iex_symbol, company_name=iex_name)
-
+        
 
         # Ensure that
         if  balance >= stock_purchase_value:

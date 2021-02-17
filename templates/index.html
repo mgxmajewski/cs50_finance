@@ -7,7 +7,7 @@
 {% block main %}
     <div>
         <h1>{{user_name}}, here is list of your assets:</h1>
-        <table style="width:100%" class="table">
+        <table style="width:100%" class="table table-striped">
             <thead>
               <tr>
                 <th scope="col">#</th>
@@ -19,39 +19,39 @@
               </tr>
             </thead>
             <tbody>
-              {% for stock in user_stock_list %}
+              {% for stock in user_shares %}
               <tr>
                 <th scope="row">{{ loop.index }}</th>
                 <td>{{stock['symbol']}}</td>
                 <td>{{stock['company_name']}}</td>
-                <td>{{stock['price']}}</td>
+                <td>{{stock['price_usd']}}</td>
                 <td>{{stock['sum(transactions.shares)']}}</td>
-                <td>{{stock['total']}}</td>
+                <td>{{stock['total_usd']}}</td>
               </tr>
               {% endfor %}
               <tr>
-                <th scope="row">Stocks TOTAL value</th>
+                <th scope="row">SHARES</th>
                 <td></td>
                 <td></td>
                 <td></td>
                 <td></td>
-                <td>{{value_of_all_stocks}}</td>
+                <td>{{value_of_all_stocks_usd}}</td>
               </tr>
               <tr>
-                <th scope="row">Your cash</th>
+                <th scope="row">CASH</th>
                 <td></td>
                 <td></td>
                 <td></td>
                 <td></td>
-                <td>TOTAL of cash</td>
+                <td>{{balance_usd}}</td>
               </tr>
               <tr>
-                <th scope="row">Total value</th>
+                <th scope="row">TOTAL</th>
                 <td></td>
                 <td></td>
                 <td></td>
                 <td></td>
-                <td>TOTAL wallet value</td>
+                <td>{{total_wallet_value_usd}}</td>
               </tr>
             </tbody>
         </table>
