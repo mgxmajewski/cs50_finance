@@ -318,11 +318,34 @@ def sell():
             shares_to_sell = int(shares_to_sell)
         
         # Calculate stock
-        shares_available = db.execute("SELECT sum(transactions.shares) FROM transactions JOIN stocks ON stocks.id = transactions.stock_id WHERE user_id=:user_id GROUP BY stock_id", user_id=user_id)[0]
+        shares_available = db.execute("SELECT sum(transactions.shares) FROM transactions JOIN stocks ON stocks.id = transactions.stock_id WHERE user_id=:user_id GROUP BY stock_id", user_id=user_id)[0]['sum(transactions.shares)']
         
-        if shares_to_sell > shares_available['sum(transactions.shares)']:
+        if shares_to_sell > shares_available:
              return apology("Exceeded your amount of shares to sell", 400)
-
+            
+        # Calculate values for db upadate
+        
+        # Shares
+        quote = lookup(stock_to_sell)
+        iex_symbol = quote['symbol']
+        iex_name = quote['name']
+        iex_price = quote['price']
+        shares_update = -shares_to_sell
+        
+        # Balance (cash)
+        balance = db.execute("SELECT cash FROM users WHERE id = :user_id", user_id = user_id)[0]['cash']
+        cash_from_sell = shares_to_sell * iex_price
+        balance_update = balance + cash_from_sell
+        
+        print(usd(balance_update))
+        
+        # Db update
+        stock_db_id = db.execute("SELECT id FROM stocks WHERE symbol = ?", iex_symbol)[0]['id']
+        db.execute("INSERT INTO transactions (stock_id, user_id, shares, price) VALUES (?, ?, ?, ?)", stock_db_id, user_id, shares_update, iex_price)
+        db.execute("UPDATE users SET cash= ? WHERE id= ? ", balance_update, user_id)
+        
+        return redirect("/")
+        
     else:
         return render_template("sell.html", user_stocks=user_stocks)
 
