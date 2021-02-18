@@ -323,7 +323,7 @@ def sell():
         # Calculate stock
         shares_available = db.execute("SELECT sum(transactions.shares) FROM transactions JOIN stocks ON stocks.id = transactions.stock_id WHERE user_id=:user_id GROUP BY stock_id", user_id=user_id)[0]['sum(transactions.shares)']
         
-        if shares_to_sell > shares_available:
+        if shares_to_sell <= shares_available:
              return apology("Exceeded your amount of shares to sell", 400)
             
         # Calculate values for db upadate

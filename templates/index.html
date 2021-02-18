@@ -18,6 +18,7 @@
       </thead>
       <tbody>
         {% for stock in user_shares %}
+        {% if stock['sum(transactions.shares)'] > 0 %}
         <tr>
           <td>{{stock['symbol']}}</td>
           <td>{{stock['company_name']}}</td>
@@ -25,6 +26,7 @@
           <td>{{stock['price_usd']}}</td>
           <td>{{stock['total_usd']}}</td>
         </tr>
+        {% endif %}
         {% endfor %}
         <tr>
           <th scope="row">SHARES</th>
