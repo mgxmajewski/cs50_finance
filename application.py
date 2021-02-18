@@ -161,7 +161,7 @@ def history():
     user_history = db.execute("SELECT * FROM transactions JOIN stocks ON stocks.id = transactions.stock_id WHERE user_id = :user_id ", user_id = user_id)
     print(user_history)
     
-    return apology("TODO")
+    return render_template("history.html", user_history=user_history)
 
 
 @app.route("/login", methods=["GET", "POST"])
