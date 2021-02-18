@@ -156,6 +156,11 @@ def buy():
 @login_required
 def history():
     """Show history of transactions"""
+    
+    user_id = session['user_id']
+    user_history = db.execute("SELECT * FROM transactions JOIN stocks ON stocks.id = transactions.stock_id WHERE user_id = :user_id ", user_id = user_id)
+    print(user_history)
+    
     return apology("TODO")
 
 
@@ -258,8 +263,6 @@ def register():
         for users in user_db_import:
             user_names.append(users['username'])
         
-        # print(user_names)
-        # user_name_check_unique = user_db_import[0]['username']
         
         if username in user_names:
             return apology("must provide uniquw username", 400)
