@@ -49,11 +49,13 @@ def index():
     
     # Gets users name
     user_id = session['user_id']
-    user_db_import = db.execute("SELECT username FROM users WHERE id = :user_id ", user_id = user_id)
+    user_db_import = db.execute(
+        "SELECT username FROM users WHERE id = :user_id ", user_id=user_id)
     user_name = user_db_import[0]['username']
 
     # Query db for users shares up to date
-    user_shares = db.execute("SELECT transactions.stock_id, stocks.symbol, stocks.company_name, sum(transactions.shares) FROM transactions JOIN stocks ON stocks.id = transactions.stock_id WHERE user_id=:user_id GROUP BY stock_id", user_id=user_id)
+    user_shares = db.execute(
+        "SELECT transactions.stock_id, stocks.symbol, stocks.company_name, sum(transactions.shares) FROM transactions JOIN stocks ON stocks.id = transactions.stock_id WHERE user_id=:user_id GROUP BY stock_id", user_id=user_id)
 
     # Create list of dictionaries for html render
     for stock in user_shares:
@@ -61,7 +63,7 @@ def index():
         stock_actual_price = stock_quote['price']
         stock_total_value = stock['sum(transactions.shares)'] * stock_actual_price
         stock['price_usd'] = usd(stock_actual_price)
-        stock['total_usd']= usd(stock_total_value)
+        stock['total_usd'] = usd(stock_total_value)
         stock['total_num'] = stock_total_value
 
     # Calculate value of all stocks    
@@ -70,7 +72,7 @@ def index():
         value_of_all_stocks += stock['total_num']
     
     # Get cash balance from db    
-    balance = db.execute("SELECT cash FROM users WHERE id = :user_id", user_id = user_id)[0]['cash']
+    balance = db.execute("SELECT cash FROM users WHERE id = :user_id", user_id=user_id)[0]['cash']
     
     # Calculate total value of the wallet
     total_wallet_value = value_of_all_stocks + balance
@@ -84,7 +86,6 @@ def index():
     return render_template("index.html", user_shares=user_shares, value_of_all_stocks_usd=value_of_all_stocks_usd, balance_usd=balance_usd, total_wallet_value_usd=total_wallet_value_usd)
 
 
-
 @app.route("/buy", methods=["GET", "POST"])
 @login_required
 def buy():
@@ -94,11 +95,10 @@ def buy():
 
         # Declare variables for sumbited username and password
         user_id = session['user_id']
-        user_name = db.execute("SELECT username FROM users WHERE id = :user_id ", user_id = user_id)[0]['username']
-        balance = db.execute("SELECT cash FROM users WHERE id = :user_id", user_id = user_id)[0]['cash']
+        user_name = db.execute("SELECT username FROM users WHERE id = :user_id ", user_id=user_id)[0]['username']
+        balance = db.execute("SELECT cash FROM users WHERE id = :user_id", user_id=user_id)[0]['cash']
         symbol = request.form.get("symbol")
         shares = request.form.get("shares")
-        
         
         # Validate symbol
         if not symbol:
@@ -129,15 +129,15 @@ def buy():
         balance_after_trans = balance - stock_purchase_value
         
         # Insert stock into stocks (only if comany wasnet bought before)
-        db.execute("INSERT OR IGNORE INTO stocks(symbol, company_name) VALUES (:symbol, :company_name)", symbol=iex_symbol, company_name=iex_name)
+        db.execute("INSERT OR IGNORE INTO stocks(symbol, company_name) VALUES (:symbol, :company_name)", 
+                   symbol=iex_symbol, company_name=iex_name)
         
-        
-
         # Validate user cash balance
-        if  balance >= stock_purchase_value:
+        if balance >= stock_purchase_value:
             stock_db_id = db.execute("SELECT id FROM stocks WHERE symbol = ?", iex_symbol)[0]['id']
             # Update db with purchased stock
-            db.execute("INSERT INTO transactions (stock_id, user_id, shares, price) VALUES (?, ?, ?, ?)", stock_db_id, user_id, shares, iex_price)
+            db.execute("INSERT INTO transactions (stock_id, user_id, shares, price) VALUES (?, ?, ?, ?)", 
+                       stock_db_id, user_id, shares, iex_price)
             db.execute("UPDATE users SET cash= ? WHERE id= ? ", balance_after_trans, user_id)
         else:
             return apology("Sorry, you dont have enough cash", 400)
@@ -150,8 +150,6 @@ def buy():
         return render_template("buy.html")
 
 
-
-
 @app.route("/history")
 @login_required
 def history():
@@ -161,7 +159,8 @@ def history():
     user_id = session['user_id']
     
     # Query db for all users transactions
-    user_history = db.execute("SELECT * FROM transactions JOIN stocks ON stocks.id = transactions.stock_id WHERE user_id = :user_id ", user_id = user_id)
+    user_history = db.execute(
+        "SELECT * FROM transactions JOIN stocks ON stocks.id = transactions.stock_id WHERE user_id = :user_id ", user_id=user_id)
     
     return render_template("history.html", user_history=user_history)
 
@@ -239,9 +238,8 @@ def quote():
         user_id = session['user_id']
         
         # Query db for users username
-        user_db_import = db.execute("SELECT username FROM users WHERE id = :user_id ", user_id = user_id)
+        user_db_import = db.execute("SELECT username FROM users WHERE id = :user_id ", user_id=user_id)
         user_name = user_db_import[0]['username']
-
 
         # Redirect user to login
         return render_template("quoted.html", iex_symbol=iex_symbol, iex_name=iex_name, iex_price=iex_price, user_name=user_name)
@@ -249,7 +247,6 @@ def quote():
     # User reached route via GET (as by clicking a link or via redirect)
     else:
         return render_template("quote.html")
-
 
     return apology("TODO")
 
@@ -274,8 +271,7 @@ def register():
             user_names.append(users['username'])
         
         if username in user_names:
-            return apology("must provide uniquw username", 400)
-        
+            return apology("must provide unique username", 400)
         
         # Ensure username was submitted
         if not username:
@@ -306,7 +302,8 @@ def sell():
     """Sell shares of stock"""
     
     user_id = session['user_id']
-    user_shares = db.execute("SELECT transactions.stock_id, stocks.symbol, stocks.company_name, sum(transactions.shares) FROM transactions JOIN stocks ON stocks.id = transactions.stock_id WHERE user_id=:user_id GROUP BY stock_id", user_id=user_id)
+    user_shares = db.execute(
+        "SELECT transactions.stock_id, stocks.symbol, stocks.company_name, sum(transactions.shares) FROM transactions JOIN stocks ON stocks.id = transactions.stock_id WHERE user_id=:user_id GROUP BY stock_id", user_id=user_id)
     
     user_stocks = []
 
@@ -332,13 +329,12 @@ def sell():
             shares_to_sell = int(shares_to_sell)
         
         # Validate if user has enough shares available to sell
-        shares_available = db.execute("SELECT sum(transactions.shares) FROM transactions JOIN stocks ON stocks.id = transactions.stock_id WHERE user_id=:user_id AND symbol=:symbol ", user_id=user_id, symbol= stock_to_sell)[0]['sum(transactions.shares)']
+        shares_available = db.execute("SELECT sum(transactions.shares) FROM transactions JOIN stocks ON stocks.id = transactions.stock_id WHERE user_id=:user_id AND symbol=:symbol ",
+                                      user_id=user_id, symbol=stock_to_sell)[0]['sum(transactions.shares)']
 
         if shares_to_sell > shares_available:
             return apology("Exceeded your amount of shares to sell", 400)
             
-        
-        
         # Shares
         quote = lookup(stock_to_sell)
         iex_symbol = quote['symbol']
@@ -347,15 +343,15 @@ def sell():
         shares_update = -shares_to_sell
         
         # Balance (cash)
-        balance = db.execute("SELECT cash FROM users WHERE id = :user_id", user_id = user_id)[0]['cash']
+        balance = db.execute("SELECT cash FROM users WHERE id = :user_id", user_id=user_id)[0]['cash']
         cash_from_sell = shares_to_sell * iex_price
         balance_update = balance + cash_from_sell
-        
         
         # Update db if transaction is valid
         if shares_to_sell <= shares_available:
             stock_db_id = db.execute("SELECT id FROM stocks WHERE symbol = ?", iex_symbol)[0]['id']
-            db.execute("INSERT INTO transactions (stock_id, user_id, shares, price) VALUES (?, ?, ?, ?)", stock_db_id, user_id, shares_update, iex_price)
+            db.execute("INSERT INTO transactions (stock_id, user_id, shares, price) VALUES (?, ?, ?, ?)",
+                       stock_db_id, user_id, shares_update, iex_price)
             db.execute("UPDATE users SET cash= ? WHERE id= ? ", balance_update, user_id)
         
         return redirect("/")
