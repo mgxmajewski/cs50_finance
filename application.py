@@ -46,12 +46,13 @@ if not os.environ.get("API_KEY"):
 @login_required
 def index():
     """Show portfolio of stocks"""
-
+    
+    # Gets users name
     user_id = session['user_id']
     user_db_import = db.execute("SELECT username FROM users WHERE id = :user_id ", user_id = user_id)
     user_name = user_db_import[0]['username']
 
-    #
+    # Query db for users shares up to date
     user_shares = db.execute("SELECT transactions.stock_id, stocks.symbol, stocks.company_name, sum(transactions.shares) FROM transactions JOIN stocks ON stocks.id = transactions.stock_id WHERE user_id=:user_id GROUP BY stock_id", user_id=user_id)
 
     # Create list of dictionaries for html render
@@ -91,14 +92,13 @@ def buy():
 
     if request.method == "POST":
 
-
+        # Declare variables for sumbited username and password
         user_id = session['user_id']
         user_name = db.execute("SELECT username FROM users WHERE id = :user_id ", user_id = user_id)[0]['username']
         balance = db.execute("SELECT cash FROM users WHERE id = :user_id", user_id = user_id)[0]['cash']
         symbol = request.form.get("symbol")
         shares = request.form.get("shares")
         
-        print(symbol)
         
         # Validate symbol
         if not symbol:
@@ -112,32 +112,32 @@ def buy():
         else:
             shares = int(shares)
         
+        # Call lookup to get price
         stock_import = lookup(symbol)
         
-        # Validate ticker symbol is
+        # Validate ticker symbol is valid
         if stock_import == None:
             return apology("Sorry, ticker symbol invalid", 400)
         
+        # Declare variables to render quote of the stock
         iex_symbol = stock_import['symbol']
         iex_name = stock_import['name']
         iex_price = stock_import['price']
-
+        
+        # Calculate values for db update     
         stock_purchase_value = iex_price * shares
-
         balance_after_trans = balance - stock_purchase_value
-
-        print(balance_after_trans)
-        print(user_id)
-
+        
+        # Insert stock into stocks (only if comany wasnet bought before)
         db.execute("INSERT OR IGNORE INTO stocks(symbol, company_name) VALUES (:symbol, :company_name)", symbol=iex_symbol, company_name=iex_name)
+        
         
 
         # Validate user cash balance
         if  balance >= stock_purchase_value:
             stock_db_id = db.execute("SELECT id FROM stocks WHERE symbol = ?", iex_symbol)[0]['id']
-
+            # Update db with purchased stock
             db.execute("INSERT INTO transactions (stock_id, user_id, shares, price) VALUES (?, ?, ?, ?)", stock_db_id, user_id, shares, iex_price)
-
             db.execute("UPDATE users SET cash= ? WHERE id= ? ", balance_after_trans, user_id)
         else:
             return apology("Sorry, you dont have enough cash", 400)
@@ -157,9 +157,11 @@ def buy():
 def history():
     """Show history of transactions"""
     
+    # Gets user id
     user_id = session['user_id']
+    
+    # Query db for all users transactions
     user_history = db.execute("SELECT * FROM transactions JOIN stocks ON stocks.id = transactions.stock_id WHERE user_id = :user_id ", user_id = user_id)
-    print(user_history)
     
     return render_template("history.html", user_history=user_history)
 
@@ -218,18 +220,25 @@ def quote():
 
     if request.method == "POST":
 
+        # Get symbol from user submit
         symbol = request.form.get("symbol")
+        
+        # Call lookup function   
         quote = lookup(symbol)
-        # Ensure username was submitted
+        
+        # Ensure symbol was submitted
         if not symbol:
             return apology("must provide valid stock name", 400)
         elif quote == None:
             return apology("Sorry, no such a stock", 400)
-
+        
+        # Declare variables to render quote of the stock
         iex_symbol = quote['symbol']
         iex_name = quote['name']
         iex_price = usd(quote['price'])
         user_id = session['user_id']
+        
+        # Query db for users username
         user_db_import = db.execute("SELECT username FROM users WHERE id = :user_id ", user_id = user_id)
         user_name = user_db_import[0]['username']
 
@@ -251,22 +260,24 @@ def register():
 
     if request.method == "POST":
 
+        # Declare variables for sumbited username and password
         username = request.form.get("username")
         password = request.form.get("password")
         confirmation = request.form.get("confirmation")
         pwhash = generate_password_hash(confirmation, method='pbkdf2:sha256', salt_length=8)
-        # Ensure username was submitted
-        
+       
+        # Ensure user was no registered before
         user_db_import = db.execute("SELECT username FROM users")
-        
         user_names = []
+        
         for users in user_db_import:
             user_names.append(users['username'])
-        
         
         if username in user_names:
             return apology("must provide uniquw username", 400)
         
+        
+        # Ensure username was submitted
         if not username:
             return apology("must provide username", 400)
 
@@ -278,7 +289,6 @@ def register():
         elif password != confirmation:
             return apology("confirmation must match password", 400)
 
-        # print(check_password_hash(pwhash, password))
         # Insert username and hash to database
         db.execute("INSERT INTO users(username, hash) VALUES (?, ?)", username, pwhash)
 
@@ -309,34 +319,25 @@ def sell():
         stock_to_sell = request.form.get("symbol")
         shares_to_sell = request.form.get("shares")
     
-        # Validate stock to sell
+        # Validate submited stock to sell
         if not stock_to_sell:
             return apology("You must select stock name", 400)
         elif stock_to_sell == None:
             return apology("Sorry, no such a stock", 400)
     
-        # Validate shares
+        # Validate submited shares 
         if not shares_to_sell.isdigit():
             return apology("You must provide positive integer", 400)
         else:
             shares_to_sell = int(shares_to_sell)
         
-        # Calculate stock
+        # Validate if user has enough shares available to sell
         shares_available = db.execute("SELECT sum(transactions.shares) FROM transactions JOIN stocks ON stocks.id = transactions.stock_id WHERE user_id=:user_id AND symbol=:symbol ", user_id=user_id, symbol= stock_to_sell)[0]['sum(transactions.shares)']
-        
-        
-        print('shares_to_sell', shares_to_sell)
-        print('shares_available', shares_available )
-        print('shares_to_sell type ', type(shares_to_sell))
-        print('shares_available type ', type(shares_available))
-        
-        if shares_to_sell == shares_available:
-            print("equal")
-            
-        elif shares_to_sell > shares_available:
+
+        if shares_to_sell > shares_available:
             return apology("Exceeded your amount of shares to sell", 400)
             
-        # Calculate values for db upadate
+        
         
         # Shares
         quote = lookup(stock_to_sell)
@@ -350,10 +351,9 @@ def sell():
         cash_from_sell = shares_to_sell * iex_price
         balance_update = balance + cash_from_sell
         
-        print(usd(balance_update))
         
+        # Update db if transaction is valid
         if shares_to_sell <= shares_available:
-            # Db update
             stock_db_id = db.execute("SELECT id FROM stocks WHERE symbol = ?", iex_symbol)[0]['id']
             db.execute("INSERT INTO transactions (stock_id, user_id, shares, price) VALUES (?, ?, ?, ?)", stock_db_id, user_id, shares_update, iex_price)
             db.execute("UPDATE users SET cash= ? WHERE id= ? ", balance_update, user_id)
