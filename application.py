@@ -54,12 +54,18 @@ def index():
     # Gets users name
     user_id = session['user_id']
     user_db_import = db.execute(
-        "SELECT username FROM users WHERE id = :user_id ", user_id=user_id)
+        "SELECT username FROM users WHERE id = :user_id ",
+        user_id=user_id)
     user_name = user_db_import[0]['username']
 
     # Query db for users shares up to date
-    user_shares = db.execute(
-        "SELECT transactions.stock_id, stocks.symbol, stocks.company_name, sum(transactions.shares) FROM transactions JOIN stocks ON stocks.id = transactions.stock_id WHERE user_id=:user_id GROUP BY stock_id", user_id=user_id)
+    user_shares = db.execute("SELECT transactions.stock_id, stocks.symbol, stocks.company_name, "
+                             "sum(transactions.shares) "
+                             "FROM transactions "
+                             "JOIN stocks "
+                             "ON stocks.id = transactions.stock_id "
+                             "WHERE user_id=:user_id "
+                             "GROUP BY stock_id", user_id=user_id)
 
     # Create list of dictionaries for html render
     for stock in user_shares:
@@ -76,7 +82,10 @@ def index():
         value_of_all_stocks += stock['total_num']
 
     # Get cash balance from db
-    balance = db.execute("SELECT cash FROM users WHERE id = :user_id", user_id=user_id)[0]['cash']
+    balance = db.execute("SELECT cash "
+                         "FROM users "
+                         "WHERE id = :user_id",
+                         user_id=user_id)[0]['cash']
 
     # Calculate total value of the wallet
     total_wallet_value = value_of_all_stocks + balance
@@ -87,7 +96,11 @@ def index():
     value_of_all_stocks_usd = usd(value_of_all_stocks)
 
     # Render index.html
-    return render_template("index.html", user_shares=user_shares, value_of_all_stocks_usd=value_of_all_stocks_usd, balance_usd=balance_usd, total_wallet_value_usd=total_wallet_value_usd)
+    return render_template("index.html",
+                           user_shares=user_shares,
+                           value_of_all_stocks_usd=value_of_all_stocks_usd,
+                           balance_usd=balance_usd,
+                           total_wallet_value_usd=total_wallet_value_usd)
 
 
 @app.route("/buy", methods=["GET", "POST"])
@@ -99,8 +112,16 @@ def buy():
 
         # Declare variables for sumbited username and password
         user_id = session['user_id']
-        user_name = db.execute("SELECT username FROM users WHERE id = :user_id ", user_id=user_id)[0]['username']
-        balance = db.execute("SELECT cash FROM users WHERE id = :user_id", user_id=user_id)[0]['cash']
+        user_name = db.execute("SELECT username "
+                               "FROM users "
+                               "WHERE id = :user_id ",
+                               user_id=user_id)[0]['username']
+
+        balance = db.execute("SELECT cash "
+                             "FROM users "
+                             "WHERE id = :user_id",
+                             user_id=user_id)[0]['cash']
+
         symbol = request.form.get("symbol")
         shares = request.form.get("shares")
 
@@ -133,16 +154,27 @@ def buy():
         balance_after_trans = balance - stock_purchase_value
 
         # Insert stock into stocks (only if comany wasnet bought before)
-        db.execute("INSERT OR IGNORE INTO stocks(symbol, company_name) VALUES (:symbol, :company_name)",
+        db.execute("INSERT OR IGNORE "
+                   "INTO stocks(symbol, company_name) "
+                   "VALUES (:symbol, :company_name)",
                    symbol=iex_symbol, company_name=iex_name)
 
         # Validate user cash balance
         if balance >= stock_purchase_value:
-            stock_db_id = db.execute("SELECT id FROM stocks WHERE symbol = ?", iex_symbol)[0]['id']
+            stock_db_id = db.execute("SELECT id "
+                                     "FROM stocks "
+                                     "WHERE symbol = ?",
+                                     iex_symbol)[0]['id']
+
             # Update db with purchased stock
-            db.execute("INSERT INTO transactions (stock_id, user_id, shares, price) VALUES (?, ?, ?, ?)",
+            db.execute("INSERT INTO transactions (stock_id, user_id, shares, price) "
+                       "VALUES (?, ?, ?, ?)",
                        stock_db_id, user_id, shares, iex_price)
-            db.execute("UPDATE users SET cash= ? WHERE id= ? ", balance_after_trans, user_id)
+
+            db.execute("UPDATE users "
+                       "SET cash= ? "
+                       "WHERE id= ? ",
+                       balance_after_trans, user_id)
         else:
             return apology("Sorry, you dont have enough cash", 400)
 
@@ -163,8 +195,12 @@ def history():
     user_id = session['user_id']
 
     # Query db for all users transactions
-    user_history = db.execute(
-        "SELECT * FROM transactions JOIN stocks ON stocks.id = transactions.stock_id WHERE user_id = :user_id ", user_id=user_id)
+    user_history = db.execute("SELECT * "
+                              "FROM transactions "
+                              "JOIN stocks "
+                              "ON stocks.id = transactions.stock_id "
+                              "WHERE user_id = :user_id ",
+                              user_id=user_id)
 
     return render_template("history.html", user_history=user_history)
 
@@ -188,7 +224,10 @@ def login():
             return apology("must provide password", 403)
 
         # Query database for username
-        rows = db.execute("SELECT * FROM users WHERE username = :username", username=request.form.get("username"))
+        rows = db.execute("SELECT * "
+                          "FROM users "
+                          "WHERE username = :username",
+                          username=request.form.get("username"))
 
         # Ensure username exists and password is correct
         if len(rows) != 1 or not check_password_hash(rows[0]["hash"], request.form.get("password")):
@@ -242,7 +281,10 @@ def quote():
         user_id = session['user_id']
 
         # Query db for users username
-        user_db_import = db.execute("SELECT username FROM users WHERE id = :user_id ", user_id=user_id)
+        user_db_import = db.execute("SELECT username "
+                                    "FROM users "
+                                    "WHERE id = :user_id ",
+                                    user_id=user_id)
         user_name = user_db_import[0]['username']
 
         # Redirect user to login
@@ -307,7 +349,14 @@ def sell():
 
     user_id = session['user_id']
     user_shares = db.execute(
-        "SELECT transactions.stock_id, stocks.symbol, stocks.company_name, sum(transactions.shares) FROM transactions JOIN stocks ON stocks.id = transactions.stock_id WHERE user_id=:user_id GROUP BY stock_id", user_id=user_id)
+        "SELECT transactions.stock_id, stocks.symbol, stocks.company_name, "
+        "sum(transactions.shares) "
+        "FROM transactions "
+        "JOIN stocks "
+        "ON stocks.id = transactions.stock_id "
+        "WHERE user_id=:user_id "
+        "GROUP BY stock_id",
+        user_id=user_id)
 
     user_stocks = []
 
@@ -333,8 +382,14 @@ def sell():
             shares_to_sell = int(shares_to_sell)
 
         # Validate if user has enough shares available to sell
-        shares_available = db.execute("SELECT sum(transactions.shares) FROM transactions JOIN stocks ON stocks.id = transactions.stock_id WHERE user_id=:user_id AND symbol=:symbol ",
-                                      user_id=user_id, symbol=stock_to_sell)[0]['sum(transactions.shares)']
+        shares_available = db.execute("SELECT sum(transactions.shares) "
+                                      "FROM transactions "
+                                      "JOIN stocks "
+                                      "ON stocks.id = transactions.stock_id "
+                                      "WHERE user_id=:user_id "
+                                      "AND symbol=:symbol ",
+                                      user_id=user_id,
+                                      symbol=stock_to_sell)[0]['sum(transactions.shares)']
 
         if shares_to_sell > shares_available:
             return apology("Exceeded your amount of shares to sell", 400)
