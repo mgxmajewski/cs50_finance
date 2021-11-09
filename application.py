@@ -154,7 +154,7 @@ def buy():
         stock_purchase_value = iex_price * shares
         balance_after_trans = balance - stock_purchase_value
 
-        # Insert stock into stocks (only if comany wasnet bought before)
+        # Insert stock into stocks (only if company wasn't bought before)
         db.execute("INSERT OR IGNORE "
                    "INTO stocks(symbol, company_name) "
                    "VALUES (:symbol, :company_name)",
@@ -380,13 +380,13 @@ def sell():
         stock_to_sell = request.form.get("symbol")
         shares_to_sell = request.form.get("shares")
 
-        # Validate submited stock to sell
+        # Validate submitted stock to sell
         if not stock_to_sell:
             return apology("You must select stock name", 400)
         elif stock_to_sell is None:
             return apology("Sorry, no such a stock", 400)
 
-        # Validate submited shares
+        # Validate submitted shares
         if not shares_to_sell.isdigit():
             return apology("You must provide positive integer", 400)
         else:
