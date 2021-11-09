@@ -110,7 +110,7 @@ def buy():
 
     if request.method == "POST":
 
-        # Declare variables for sumbited username and password
+        # Declare variables for submitted username and password
         user_id = session['user_id']
         user_name = db.execute("SELECT username "
                                "FROM users "
@@ -304,7 +304,7 @@ def register():
 
     if request.method == "POST":
 
-        # Declare variables for sumbited username and password
+        # Declare variables for submitted username and password
         username = request.form.get("username")
         password = request.form.get("password")
         confirmation = request.form.get("confirmation")
