@@ -128,7 +128,7 @@ def buy():
         # Validate symbol
         if not symbol:
             return apology("must provide valid stock name", 400)
-        elif symbol == None:
+        elif symbol is None:
             return apology("Sorry, no such a stock", 400)
 
         # Validate shares
@@ -376,7 +376,7 @@ def sell():
         # Validate submited stock to sell
         if not stock_to_sell:
             return apology("You must select stock name", 400)
-        elif stock_to_sell == None:
+        elif stock_to_sell is None:
             return apology("Sorry, no such a stock", 400)
 
         # Validate submited shares
