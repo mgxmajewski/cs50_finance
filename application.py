@@ -285,6 +285,7 @@ def quote():
                                     "FROM users "
                                     "WHERE id = :user_id ",
                                     user_id=user_id)
+
         user_name = user_db_import[0]['username']
 
         # Redirect user to login
@@ -310,7 +311,8 @@ def register():
         pwhash = generate_password_hash(confirmation, method='pbkdf2:sha256', salt_length=8)
 
         # Ensure user was no registered before
-        user_db_import = db.execute("SELECT username FROM users")
+        user_db_import = db.execute("SELECT username "
+                                    "FROM users")
         user_names = []
 
         for users in user_db_import:
@@ -332,7 +334,9 @@ def register():
             return apology("confirmation must match password", 400)
 
         # Insert username and hash to database
-        db.execute("INSERT INTO users(username, hash) VALUES (?, ?)", username, pwhash)
+        db.execute("INSERT INTO users(username, hash) "
+                   "VALUES (?, ?)",
+                   username, pwhash)
 
         # Redirect user to login
         return redirect("/")
@@ -402,16 +406,29 @@ def sell():
         shares_update = -shares_to_sell
 
         # Balance (cash)
-        balance = db.execute("SELECT cash FROM users WHERE id = :user_id", user_id=user_id)[0]['cash']
+        balance = db.execute("SELECT cash "
+                             "FROM users "
+                             "WHERE id = :user_id",
+                             user_id=user_id)[0]['cash']
+
         cash_from_sell = shares_to_sell * iex_price
         balance_update = balance + cash_from_sell
 
         # Update db if transaction is valid
         if shares_to_sell <= shares_available:
-            stock_db_id = db.execute("SELECT id FROM stocks WHERE symbol = ?", iex_symbol)[0]['id']
-            db.execute("INSERT INTO transactions (stock_id, user_id, shares, price) VALUES (?, ?, ?, ?)",
+            stock_db_id = db.execute("SELECT id "
+                                     "FROM stocks "
+                                     "WHERE symbol = ?",
+                                     iex_symbol)[0]['id']
+
+            db.execute("INSERT INTO transactions (stock_id, user_id, shares, price) "
+                       "VALUES (?, ?, ?, ?)",
                        stock_db_id, user_id, shares_update, iex_price)
-            db.execute("UPDATE users SET cash= ? WHERE id= ? ", balance_update, user_id)
+
+            db.execute("UPDATE users "
+                       "SET cash= ? "
+                       "WHERE id= ? ",
+                       balance_update, user_id)
 
         return redirect("/")
 
