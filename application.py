@@ -269,18 +269,18 @@ def quote():
         symbol = request.form.get("symbol")
 
         # Call lookup function
-        quote = lookup(symbol)
+        quoted_stock = lookup(symbol)
 
         # Ensure symbol was submitted
         if not symbol:
             return apology("must provide valid stock name", 400)
-        elif quote == None:
+        elif quoted_stock is None:
             return apology("Sorry, no such a stock", 400)
 
         # Declare variables to render quote of the stock
-        iex_symbol = quote['symbol']
-        iex_name = quote['name']
-        iex_price = usd(quote['price'])
+        iex_symbol = quoted_stock['symbol']
+        iex_name = quoted_stock['name']
+        iex_price = usd(quoted_stock['price'])
         user_id = session['user_id']
 
         # Query db for users username
