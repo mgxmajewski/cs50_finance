@@ -407,10 +407,10 @@ def sell():
             return apology("Exceeded your amount of shares to sell", 400)
 
         # Shares
-        quote = lookup(stock_to_sell)
-        iex_symbol = quote['symbol']
-        iex_name = quote['name']
-        iex_price = quote['price']
+        quoted_to_sell = lookup(stock_to_sell)
+        iex_symbol = quoted_to_sell['symbol']
+        iex_name = quoted_to_sell['name']
+        iex_price = quoted_to_sell['price']
         shares_update = -shares_to_sell
 
         # Balance (cash)
