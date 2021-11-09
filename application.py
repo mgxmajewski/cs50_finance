@@ -141,7 +141,7 @@ def buy():
         stock_import = lookup(symbol)
 
         # Validate ticker symbol is valid
-        if stock_import == None:
+        if stock_import is None:
             return apology("Sorry, ticker symbol invalid", 400)
 
         # Declare variables to render quote of the stock
