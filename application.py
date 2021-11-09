@@ -315,7 +315,7 @@ def register():
         username = request.form.get("username")
         password = request.form.get("password")
         confirmation = request.form.get("confirmation")
-        pwhash = generate_password_hash(confirmation, method='pbkdf2:sha256', salt_length=8)
+        passwd_hash = generate_password_hash(confirmation, method='pbkdf2:sha256', salt_length=8)
 
         # Ensure user was no registered before
         user_db_import = db.execute("SELECT username "
@@ -343,7 +343,8 @@ def register():
         # Insert username and hash to database
         db.execute("INSERT INTO users(username, hash) "
                    "VALUES (?, ?)",
-                   username, pwhash)
+                   username,
+                   passwd_hash)
 
         # Redirect user to login
         return redirect("/")
