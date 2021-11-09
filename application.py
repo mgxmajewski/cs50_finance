@@ -65,7 +65,8 @@ def index():
                              "JOIN stocks "
                              "ON stocks.id = transactions.stock_id "
                              "WHERE user_id=:user_id "
-                             "GROUP BY stock_id", user_id=user_id)
+                             "GROUP BY stock_id",
+                             user_id=user_id)
 
     # Create list of dictionaries for html render
     for stock in user_shares:
@@ -157,7 +158,8 @@ def buy():
         db.execute("INSERT OR IGNORE "
                    "INTO stocks(symbol, company_name) "
                    "VALUES (:symbol, :company_name)",
-                   symbol=iex_symbol, company_name=iex_name)
+                   symbol=iex_symbol,
+                   company_name=iex_name)
 
         # Validate user cash balance
         if balance >= stock_purchase_value:
@@ -174,7 +176,8 @@ def buy():
             db.execute("UPDATE users "
                        "SET cash= ? "
                        "WHERE id= ? ",
-                       balance_after_trans, user_id)
+                       balance_after_trans,
+                       user_id)
         else:
             return apology("Sorry, you dont have enough cash", 400)
 
@@ -289,7 +292,11 @@ def quote():
         user_name = user_db_import[0]['username']
 
         # Redirect user to login
-        return render_template("quoted.html", iex_symbol=iex_symbol, iex_name=iex_name, iex_price=iex_price, user_name=user_name)
+        return render_template("quoted.html",
+                               iex_symbol=iex_symbol,
+                               iex_name=iex_name,
+                               iex_price=iex_price,
+                               user_name=user_name)
 
     # User reached route via GET (as by clicking a link or via redirect)
     else:
