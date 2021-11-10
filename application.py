@@ -49,6 +49,12 @@ db = SQL(str('sqlite:///'+db_path))
 if not os.environ.get("API_KEY"):
     raise RuntimeError("API_KEY not set")
 
+json_stocks = json.dumps(db.execute('SELECT * FROM stocks'))
+
+redis_client.set('cached_stocks', json_stocks)
+unpacked_stocks = json.loads(redis_client.get('cached_stocks'))
+print(unpacked_stocks)
+
 
 @app.route("/")
 @login_required
