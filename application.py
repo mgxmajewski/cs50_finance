@@ -36,7 +36,7 @@ Session(app)
 
 # Configure CS50 Library to use SQLite database
 path = os.path.dirname(os.path.abspath(__file__))
-db_path = os.path.join(path, 'finance.db')
+db_path = os.path.join(path, 'finance_integrated.db')
 print(str(db_path))
 
 db = SQL(str('sqlite:///'+db_path))
@@ -240,6 +240,7 @@ def login():
         session["user_id"] = rows[0]["id"]
 
         # Redirect user to home page
+        flash("you are successfully logged in")
         return redirect("/")
 
     # User reached route via GET (as by clicking a link or via redirect)
