@@ -1,7 +1,7 @@
 import os
 
 from cs50 import SQL
-from flask import Flask, flash, redirect, render_template, request, session, Response
+from flask import Flask, flash, redirect, render_template, request, session, jsonify
 from flask_session import Session
 from tempfile import mkdtemp
 from werkzeug.exceptions import default_exceptions, HTTPException, InternalServerError
@@ -446,6 +446,22 @@ def sell():
 
     else:
         return render_template("sell.html", user_stocks=user_stocks)
+
+
+@app.route("/suggestions", methods=["GET"])
+@login_required
+def suggestions():
+    phrase = request.args.get('phrase')
+    phrase_regex = str(phrase+'%')
+
+    result = db.execute("SELECT symbol, company_name "
+                        "FROM stocks WHERE symbol "
+                        "LIKE :lookup_regex "
+                        "ORDER BY symbol "
+                        "DESC LIMIT 5",
+                        lookup_regex=phrase_regex)
+
+    return jsonify(result)
 
 
 def errorhandler(e):
