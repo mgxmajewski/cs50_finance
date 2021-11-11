@@ -1,9 +1,7 @@
 import os
-import redis
-import json
 
 from cs50 import SQL
-from flask import Flask, flash, redirect, render_template, request, session
+from flask import Flask, flash, redirect, render_template, request, session, Response
 from flask_session import Session
 from tempfile import mkdtemp
 from werkzeug.exceptions import default_exceptions, HTTPException, InternalServerError
@@ -11,7 +9,6 @@ from werkzeug.security import check_password_hash, generate_password_hash
 
 from helpers import apology, login_required, lookup, usd
 
-redis_client = redis.Redis()
 
 # Configure application
 app = Flask(__name__)
@@ -49,11 +46,7 @@ db = SQL(str('sqlite:///'+db_path))
 if not os.environ.get("API_KEY"):
     raise RuntimeError("API_KEY not set")
 
-json_stocks = json.dumps(db.execute('SELECT * FROM stocks'))
-
-redis_client.set('cached_stocks', json_stocks)
-unpacked_stocks = json.loads(redis_client.get('cached_stocks'))
-print(unpacked_stocks)
+print(db.execute("SELECT symbol, company_name FROM stocks WHERE symbol LIKE 'AAP%' ORDER BY symbol ASC LIMIT 5"))
 
 
 @app.route("/")
