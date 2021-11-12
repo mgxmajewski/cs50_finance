@@ -15,7 +15,7 @@ const parseSuggestions = array => array.map(stock => `${stock.symbol} - ${stock.
 
 const addSuggestionsToInput = (inputDiv) => {
     inputDiv.addEventListener("input", (e) => {
-            if(e.target.value!==''){
+            if(e.target.value !== ''){
                 fetchStocks(suggestionsEndpoint(e.target.value))
                 .then(results => parseSuggestions(results))
                 .then(parsedResults => addSuggestionsDivWrapper(inputDiv, parsedResults))
@@ -30,9 +30,28 @@ const addSuggestionsDivWrapper = (inputDiv, array) => {
     suggestionsDivWrapper.setAttribute("class", "autocomplete-items");
     inputDiv.parentNode.appendChild(suggestionsDivWrapper)
     console.log(suggestionsDivWrapper)
+    addSuggestedStocks(inputDiv, array, suggestionsDivWrapper)
 }
 
 
+const addSuggestedStocks = (inputDiv, arr, wrapper) => {
+    for (let i = 0; i < arr.length; i++) {
+        if (arr[i].substr(0, inputDiv.value.length).toUpperCase() === inputDiv.value.toUpperCase()) {
+            /*create a DIV element for each matching element:*/
+            const suggestedStock = document.createElement("DIV");
+            /*make the matching letters bold:*/
+            suggestedStock.innerHTML = "<strong>" + arr[i].substr(0, inputDiv.value.length) + "</strong>";
+            suggestedStock.innerHTML += arr[i].substr(inputDiv.value.length);
+            /*insert a input field that will hold the current array item's value:*/
+            suggestedStock.innerHTML += "<input type='hidden' value='" + arr[i] + "'>";
+            /*execute a function when someone clicks on the item value (DIV element):*/
+            suggestedStock.addEventListener("click", function (e) {
+                /*insert the value for the autocomplete text field:*/
+                inputDiv.value = document.getElementsByTagName("input")[0].value;
+            });
+            wrapper.appendChild(suggestedStock);
+        }
+    }
+}
+
 addSuggestionsToInput(inputDiv)
-
-
