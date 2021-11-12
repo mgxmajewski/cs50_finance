@@ -1,5 +1,6 @@
 const suggestionsEndpoint = (phrase) => `http://localhost:5000/suggestions?phrase=${phrase.toUpperCase()}`
 const inputDiv = document.getElementById("myInput")
+
 // Handle fetch request
 async function fetchStocks(url) {
     try {
@@ -12,16 +13,26 @@ async function fetchStocks(url) {
 
 const parseSuggestions = array => array.map(stock => `${stock.symbol} - ${stock.company_name}`)
 
-const logFetchedStocks = results => console.log(results)
+const addSuggestionsToInput = (inputDiv) => {
+    inputDiv.addEventListener("input", (e) => {
+            if(e.target.value!==''){
+                fetchStocks(suggestionsEndpoint(e.target.value))
+                .then(results => parseSuggestions(results))
+                .then(parsedResults => addSuggestionsDivWrapper(inputDiv, parsedResults))
+            }
+    });
+}
 
-inputDiv.addEventListener("keyup", (e) => {
-    e.preventDefault()
-    if(e.target.value !== ''){
-        fetchStocks(suggestionsEndpoint(e.target.value))
-            .then(results => parseSuggestions(results))
-            .then(parsedSuggestions => logFetchedStocks(parsedSuggestions))
-    }
-});
+
+const addSuggestionsDivWrapper = (inputDiv, array) => {
+    const suggestionsDivWrapper = document.createElement("DIV");
+    suggestionsDivWrapper.setAttribute("id", inputDiv.id + "autocomplete-list");
+    suggestionsDivWrapper.setAttribute("class", "autocomplete-items");
+    inputDiv.parentNode.appendChild(suggestionsDivWrapper)
+    console.log(suggestionsDivWrapper)
+}
 
 
-const FetchedStocks = results => console.log(results)
+addSuggestionsToInput(inputDiv)
+
+
