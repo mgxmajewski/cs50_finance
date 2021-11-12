@@ -8,9 +8,10 @@
 <main class="container p-5">
     <form action="/quote" method="post">
         <div class="form-group">
-            <input autocomplete="off" autofocus="" class="form-control" name="symbol" placeholder="Symbol" type="text">
+            <input id="myInput" autocomplete="off" autofocus="" class="form-control" name="symbol" placeholder="Symbol" type="text">
         </div>
         <button class="btn btn-primary" type="submit">Quote</button>
     </form>
 </main>
+    <script src="{{url_for('static', filename='suggestions.js')}}"></script>
 {% endblock %}
