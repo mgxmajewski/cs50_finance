@@ -6,11 +6,13 @@
 
 {% block main %}
 <main class="container p-5">
-    <form action="/quote" method="post">
-        <div class="form-group">
+    <form class="row g-3 d-flex justify-content-center" action="/quote" method="post">
+        <div class="col-auto ">
             <input id="myInput" autocomplete="off" autofocus="" class="form-control" name="symbol" placeholder="Symbol" type="text">
         </div>
-        <button class="btn btn-primary" type="submit">Quote</button>
+        <div class="col-auto">
+            <button class="btn btn-primary mb-3" type="submit">Quote</button>
+        </div>
     </form>
 </main>
     <script src="{{url_for('static', filename='suggestions.js')}}"></script>
