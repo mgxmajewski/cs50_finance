@@ -15,6 +15,7 @@ const parseSuggestions = array => array.map(stock => `${stock.symbol} - ${stock.
 
 const addSuggestionsToInput = (inputDiv) => {
     inputDiv.addEventListener("input", (e) => {
+        closeAllLists(inputDiv);
             if(e.target.value !== ''){
                 fetchStocks(suggestionsEndpoint(e.target.value))
                 .then(results => parseSuggestions(results))
@@ -48,8 +49,22 @@ const addSuggestedStocks = (inputDiv, arr, wrapper) => {
             suggestedStock.addEventListener("click", function (e) {
                 /*insert the value for the autocomplete text field:*/
                 inputDiv.value = document.getElementsByTagName("input")[0].value;
+                    /*close the list of autocompleted values,
+                    (or any other open lists of autocompleted values:*/
+                    closeAllLists(inputDiv);
             });
             wrapper.appendChild(suggestedStock);
+        }
+    }
+}
+
+const closeAllLists = (inputDiv, elementToKeep) => {
+    /*close all autocomplete lists in the document,
+    except the one passed as an argument:*/
+    const autocompleteList = document.getElementsByClassName('autocomplete-items');
+    for (let i = 0; i < autocompleteList.length; i++) {
+        if (elementToKeep !== autocompleteList[i] && elementToKeep !== inputDiv) {
+            autocompleteList[i].parentNode.removeChild(autocompleteList[i]);
         }
     }
 }
