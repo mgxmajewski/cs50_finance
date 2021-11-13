@@ -5,13 +5,14 @@
 {% endblock %}
 
 {% block main %}
-    <form novalidate action="/buy" method="post" >
-        <div class="form-group">
-            <input autocomplete="off" autofocus class="form-control" name="symbol" placeholder="Stock name" type="text">
+    <form id="stock form" class="row g-3 d-flex justify-content-center" novalidate action="/buy" method="post" >
+        <div class="col-5">
+            <input id="myInput" autocomplete="off" autofocus class="form-control" name="symbol" placeholder="Stock name" type="text">
         </div>
-        <div class="form-group">
+        <div class="col-auto">
             <input autocomplete="off" autofocus class="form-control" name="shares" placeholder="Shares" type="number">
         </div>
-        <button class="btn btn-primary" type="submit">Buy</button>
+        <button class="btn btn-primary mb-3" type="submit">Buy</button>
     </form>
+    <script src="{{url_for('static', filename='suggestions.js')}}"></script>
 {% endblock %}
