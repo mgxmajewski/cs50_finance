@@ -126,8 +126,7 @@ const addArrowKeySelection = (inputDiv) => {
 }
 
 
-document.addEventListene
-r("click", function (e) {
+document.addEventListener("click", function (e) {
     closeAllLists(e.target);
 });
 requestStockForm.addEventListener('submit', function(event){
