@@ -1,5 +1,6 @@
 const suggestionsEndpoint = (phrase) => `http://localhost:5000/suggestions?phrase=${phrase.toUpperCase()}`
 const inputDiv = document.getElementById("myInput")
+const quoteForm = document.getElementById("quote form")
 
 // Handle fetch request
 async function fetchStocks(url) {
@@ -56,6 +57,7 @@ const addSuggestedStocks = (inputDiv, arr, wrapper) => {
                 /*close the list of autocompleted values,
                 (or any other open lists of autocompleted values:*/
                 closeAllLists(inputDiv);
+                quoteForm.submit()
             });
             wrapper.appendChild(suggestedStock);
         }
