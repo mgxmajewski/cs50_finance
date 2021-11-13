@@ -16,11 +16,11 @@ const parseSuggestions = array => array.map(stock => `${stock.symbol} - ${stock.
 const addSuggestionsHandlerToInput = (inputDiv) => {
     inputDiv.addEventListener("input", (e) => {
         closeAllLists(inputDiv);
-            if(e.target.value !== ''){
-                fetchStocks(suggestionsEndpoint(e.target.value))
+        if (e.target.value !== '') {
+            fetchStocks(suggestionsEndpoint(e.target.value))
                 .then(results => parseSuggestions(results))
                 .then(parsedResults => addSuggestionsDivWrapper(inputDiv, parsedResults))
-            }
+        }
     });
 }
 
