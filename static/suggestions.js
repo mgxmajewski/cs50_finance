@@ -13,6 +13,8 @@ async function fetchStocks(url) {
 
 const parseSuggestions = array => array.map(stock => `${stock.symbol} - ${stock.company_name}`)
 
+const parseSymbolForQuote = (suggestion) => suggestion.split(" - ")[0];
+
 const addSuggestionsHandlerToInput = (inputDiv) => {
     inputDiv.addEventListener("input", (e) => {
         closeAllLists(inputDiv);
@@ -48,7 +50,9 @@ const addSuggestedStocks = (inputDiv, arr, wrapper) => {
             /*execute a function when someone clicks on the item value (DIV element):*/
             suggestedStock.addEventListener("click", function (e) {
                 /*insert the value for the autocomplete text field:*/
-                inputDiv.value = e.target.getElementsByTagName("input")[0].value;
+                console.log(parseSymbolForQuote(e.target.getElementsByTagName("input")[0].value))
+                inputDiv.value = parseSymbolForQuote(e.target.getElementsByTagName("input")[0].value);
+
                 /*close the list of autocompleted values,
                 (or any other open lists of autocompleted values:*/
                 closeAllLists(inputDiv);
@@ -76,14 +80,12 @@ const addArrowKeySelection = (inputDiv) => {
         let x = document.getElementById(inputDiv.id + 'autocomplete-list');
         if (x) x = x.getElementsByTagName('div');
         if (e.keyCode === 40) {
-            console.log(currentFocus)
             /*If the arrow DOWN key is pressed,
             increase the currentFocus variable:*/
             currentFocus++;
             /*and and make the current item more visible:*/
             addActive(x);
         } else if (e.keyCode === 38) { //up
-            console.log(currentFocus)
             /*If the arrow UP key is pressed,
             decrease the currentFocus variable:*/
             currentFocus--;
