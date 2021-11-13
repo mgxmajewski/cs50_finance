@@ -1,6 +1,6 @@
 const suggestionsEndpoint = (phrase) => `http://localhost:5000/suggestions?phrase=${phrase.toUpperCase()}`
 const inputDiv = document.getElementById("myInput")
-const quoteForm = document.getElementById("quote form")
+const requestStockForm = document.getElementById("stock form")
 
 // Handle fetch request
 async function fetchStocks(url) {
@@ -126,15 +126,16 @@ const addArrowKeySelection = (inputDiv) => {
 }
 
 
-document.addEventListener("click", function (e) {
+document.addEventListene
+r("click", function (e) {
     closeAllLists(e.target);
 });
-
-quoteForm.addEventListener('submit', function(event){
+requestStockForm.addEventListener('submit', function(event){
     event.preventDefault();
     console.log(`poop ${inputDiv.value}`)
     inputDiv.value = parseSymbolForQuote(inputDiv.value);
-    quoteForm.submit()
+    inputDiv.setAttribute('style', 'background-color: grey');
+    requestStockForm.submit()
 });
 
 addSuggestionsHandlerToInput(inputDiv)
