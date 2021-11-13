@@ -52,12 +52,11 @@ const addSuggestedStocks = (inputDiv, arr, wrapper) => {
             suggestedStock.addEventListener("click", function (e) {
                 /*insert the value for the autocomplete text field:*/
                 console.log(parseSymbolForQuote(e.target.getElementsByTagName("input")[0].value))
-                inputDiv.value = parseSymbolForQuote(e.target.getElementsByTagName("input")[0].value);
+                inputDiv.value = e.target.getElementsByTagName("input")[0].value;
 
                 /*close the list of autocompleted values,
                 (or any other open lists of autocompleted values:*/
                 closeAllLists(inputDiv);
-                quoteForm.submit()
             });
             wrapper.appendChild(suggestedStock);
         }
@@ -131,5 +130,11 @@ document.addEventListener("click", function (e) {
     closeAllLists(e.target);
 });
 
+quoteForm.addEventListener('submit', function(event){
+    event.preventDefault();
+    console.log(`poop ${inputDiv.value}`)
+    inputDiv.value = parseSymbolForQuote(inputDiv.value);
+    quoteForm.submit()
+});
 
 addSuggestionsHandlerToInput(inputDiv)
