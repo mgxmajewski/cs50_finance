@@ -458,7 +458,7 @@ def suggestions():
                         "FROM stocks WHERE symbol "
                         "LIKE :lookup_regex "
                         "ORDER BY symbol "
-                        "DESC LIMIT 5",
+                        "ASC LIMIT 5",
                         lookup_regex=phrase_regex)
 
     return jsonify(result)
