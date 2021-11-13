@@ -24,16 +24,16 @@ const addSuggestionsToInput = (inputDiv) => {
     });
 }
 
-
 const addSuggestionsDivWrapper = (inputDiv, array) => {
+
     const suggestionsDivWrapper = document.createElement("DIV");
     suggestionsDivWrapper.setAttribute("id", inputDiv.id + "autocomplete-list");
     suggestionsDivWrapper.setAttribute("class", "autocomplete-items");
     inputDiv.parentNode.appendChild(suggestionsDivWrapper)
     console.log(suggestionsDivWrapper)
     addSuggestedStocks(inputDiv, array, suggestionsDivWrapper)
+    addArrowKeySelection(inputDiv)
 }
-
 
 const addSuggestedStocks = (inputDiv, arr, wrapper) => {
     for (let i = 0; i < arr.length; i++) {
