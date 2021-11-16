@@ -71,6 +71,9 @@ def index():
                              "GROUP BY stock_id",
                              user_id=user_id)
 
+    # Filter users stocks to not fetch positions closed in the past (number of stocks = 0)
+    user_shares = [i for i in user_shares if (i['sum(transactions.shares)'] > 0)]
+
     # Create list of dictionaries for html render
     for stock in user_shares:
         stock_quote = lookup(stock['symbol'])
