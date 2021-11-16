@@ -33,7 +33,6 @@ const addSuggestionsDivWrapper = (inputDiv, array) => {
     suggestionsDivWrapper.setAttribute("id", inputDiv.id + "autocomplete-list");
     suggestionsDivWrapper.setAttribute("class", "autocomplete-items");
     inputDiv.parentNode.appendChild(suggestionsDivWrapper)
-    console.log(suggestionsDivWrapper)
     addSuggestedStocks(inputDiv, array, suggestionsDivWrapper)
     addArrowKeySelection(inputDiv)
 }
