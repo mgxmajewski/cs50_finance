@@ -46,8 +46,6 @@ db = SQL(str('sqlite:///'+db_path))
 if not os.environ.get("API_KEY"):
     raise RuntimeError("API_KEY not set")
 
-print(db.execute("SELECT symbol, company_name FROM stocks WHERE symbol LIKE 'AAP%' ORDER BY symbol ASC LIMIT 5"))
-
 
 @app.route("/")
 @login_required
