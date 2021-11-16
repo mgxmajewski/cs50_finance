@@ -1,4 +1,6 @@
 from flask import Blueprint
-from .index import *
 
 routes = Blueprint('routes', __name__)
+
+from .index import *
+from .buy import *
