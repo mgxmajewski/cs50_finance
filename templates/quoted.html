@@ -6,21 +6,19 @@
 
 {% block main %}
 <main class="container p-5">
-    <p> A share of {{iex_name}} ({{iex_symbol}}) costs {{iex_price}}.</p>
+
     <div>
-        <h1>{{user_name}}, here is your quote:</h1>
+        <h3>{{user_name}}, here is your quote:</h3>
         <table style="width:100%" class="table">
             <thead>
               <tr>
-                <th scope="col">#</th>
-                <th scope="col">Symbol</th>
+                <th scope="col">Ticker</th>
                 <th scope="col">Company name</th>
                 <th scope="col">Stock price</th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <th scope="row">1</th>
                 <td>{{iex_symbol}}</td>
                 <td>{{iex_name}}</td>
                 <td>{{iex_price}}</td>
