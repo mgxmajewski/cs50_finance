@@ -1,4 +1,5 @@
-const suggestionsEndpoint = (phrase) => `http://localhost:5000/suggestions?phrase=${phrase.toUpperCase()}`
+const host = `http://127.0.0.1`
+const suggestionsEndpoint = (phrase) => `${host}:5000/suggestions?phrase=${phrase.toUpperCase()}`
 const inputDiv = document.getElementById("myInput")
 const requestStockForm = document.getElementById("stock form")
 
