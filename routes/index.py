@@ -39,7 +39,7 @@ def index():
         stock['total_num'] = stock_total_value
 
     # Calculate value of all stocks
-    value_of_all_stocks = -1
+    value_of_all_stocks = 0
     for stock in user_shares:
         value_of_all_stocks += stock['total_num']
 
