@@ -30,44 +30,54 @@ const addSuggestionsHandlerToInput = (inputDiv) => {
         if (e.target.value !== '') {
             fetchStocks(suggestionsEndpoint(e.target.value))
                 .then(results => parseSuggestions(results))
-                .then(parsedResults => addSuggestionsDivWrapper(inputDiv, parsedResults))
+                .then(parsedResults => addSuggestionsDivWrapper(inputDiv, parsedResults, e.target.value))
         }
     });
 }
 
-const addSuggestionsDivWrapper = (inputDiv, array) => {
+const addSuggestionsDivWrapper = (inputDiv, array, phrase) => {
 
     console.log(`array from addSuggestionsDivWrapper: ` + JSON.stringify(array));
     const suggestionsDivWrapper = document.createElement("DIV");
     suggestionsDivWrapper.setAttribute("id", inputDiv.id + "autocomplete-list");
     suggestionsDivWrapper.setAttribute("class", "autocomplete-items");
     inputDiv.parentNode.appendChild(suggestionsDivWrapper)
-    addSuggestedStocks(inputDiv, array, suggestionsDivWrapper)
+    addSuggestedStocks(inputDiv, array, phrase, suggestionsDivWrapper)
     addArrowKeySelection(inputDiv)
 }
 
-const addSuggestedStocks = (inputDiv, arr, wrapper) => {
-    for (let i = 0; i < arr.length; i++) {
+const boldMatchedPhrase = (elementToBeBolded, regexToBeBolded) => {
+    elementToBeBolded.innerHTML = elementToBeBolded.innerHTML.replace(regexToBeBolded, `<strong>$&</strong>`)
+}
+
+const createRegexForPhrase = (lookupPhrase) => new RegExp(`${lookupPhrase}`, 'gi')
+
+const addSuggestedStocks = (inputDiv, dbResultsArr, lookupPhrase, wrapper) => {
+    for (let i = 0; i < dbResultsArr.length; i++) {
+
         /*create a DIV element for each matching element:*/
-        const suggestedStock = document.createElement("DIV");
-        console.log(`arr: ` + JSON.stringify(arr));
+        const suggestedStockDiv = document.createElement("div");
+
+         const regexForLookupPhrase= createRegexForPhrase(lookupPhrase)
+
         /*make the matching letters bold:*/
-        suggestedStock.innerHTML = "<strong>" + arr[i].substring(0, inputDiv.value.length) + "</strong>";
-        console.log(`suggestedStock.innerHTML: ` + JSON.stringify(suggestedStock.innerHTML));
-        suggestedStock.innerHTML += arr[i].substring(inputDiv.value.length);
+        suggestedStockDiv.innerHTML = dbResultsArr[i]
+        boldMatchedPhrase(suggestedStockDiv, regexForLookupPhrase)
+
         /*insert a input field that will hold the current array item's value:*/
-        suggestedStock.innerHTML += "<input type='hidden' value='" + arr[i] + "'>";
+        suggestedStockDiv.innerHTML += "<input type='hidden' value='" + dbResultsArr[i] + "'>";
+
         /*execute a function when someone clicks on the item value (DIV element):*/
-        suggestedStock.addEventListener("click", function (e) {
+        suggestedStockDiv.addEventListener("click", function (e) {
+
             /*insert the value for the autocomplete text field:*/
-            console.log(parseSymbolForQuote(e.target.getElementsByTagName("input")[0].value))
             inputDiv.value = e.target.getElementsByTagName("input")[0].value;
 
             /*close the list of autocompleted values,
             (or any other open lists of autocompleted values:*/
             closeAllLists(inputDiv);
         });
-        wrapper.appendChild(suggestedStock);
+        wrapper.appendChild(suggestedStockDiv);
     }
 }
 
