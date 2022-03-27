@@ -1,5 +1,5 @@
-const host = `https://finance-nccixsmlaa-lm.a.run.app`
-// const host = `http://127.0.0.1:5000`
+// const host = `https://finance-nccixsmlaa-lm.a.run.app`
+const host = `http://127.0.0.1:5000`
 const suggestionsEndpoint = (phrase) => `${host}/suggestions?phrase=${phrase.toUpperCase()}`
 const inputDiv = document.getElementById("myInput")
 const requestStockForm = document.getElementById("stock form")
@@ -14,9 +14,15 @@ async function fetchStocks(url) {
     }
 }
 
-const parseSuggestions = array => array.map(stock => `${stock.symbol} - ${stock.company_name}`)
+const parseSuggestions = array => {
+    const result = array.map(stock => `${stock.symbol} - ${stock.company_name}`)
+    return result
+}
 
-const parseSymbolForQuote = (suggestion) => suggestion.split(" - ")[0];
+const parseSymbolForQuote = (suggestion) => {
+    const result = suggestion.split(" - ")[0];
+    return result
+}
 
 const addSuggestionsHandlerToInput = (inputDiv) => {
     inputDiv.addEventListener("input", (e) => {
@@ -31,6 +37,7 @@ const addSuggestionsHandlerToInput = (inputDiv) => {
 
 const addSuggestionsDivWrapper = (inputDiv, array) => {
 
+    console.log(`array from addSuggestionsDivWrapper: ` + JSON.stringify(array));
     const suggestionsDivWrapper = document.createElement("DIV");
     suggestionsDivWrapper.setAttribute("id", inputDiv.id + "autocomplete-list");
     suggestionsDivWrapper.setAttribute("class", "autocomplete-items");
@@ -41,26 +48,26 @@ const addSuggestionsDivWrapper = (inputDiv, array) => {
 
 const addSuggestedStocks = (inputDiv, arr, wrapper) => {
     for (let i = 0; i < arr.length; i++) {
-        if (arr[i].substr(0, inputDiv.value.length).toUpperCase() === inputDiv.value.toUpperCase()) {
-            /*create a DIV element for each matching element:*/
-            const suggestedStock = document.createElement("DIV");
-            /*make the matching letters bold:*/
-            suggestedStock.innerHTML = "<strong>" + arr[i].substr(0, inputDiv.value.length) + "</strong>";
-            suggestedStock.innerHTML += arr[i].substr(inputDiv.value.length);
-            /*insert a input field that will hold the current array item's value:*/
-            suggestedStock.innerHTML += "<input type='hidden' value='" + arr[i] + "'>";
-            /*execute a function when someone clicks on the item value (DIV element):*/
-            suggestedStock.addEventListener("click", function (e) {
-                /*insert the value for the autocomplete text field:*/
-                console.log(parseSymbolForQuote(e.target.getElementsByTagName("input")[0].value))
-                inputDiv.value = e.target.getElementsByTagName("input")[0].value;
+        /*create a DIV element for each matching element:*/
+        const suggestedStock = document.createElement("DIV");
+        console.log(`arr: ` + JSON.stringify(arr));
+        /*make the matching letters bold:*/
+        suggestedStock.innerHTML = "<strong>" + arr[i].substring(0, inputDiv.value.length) + "</strong>";
+        console.log(`suggestedStock.innerHTML: ` + JSON.stringify(suggestedStock.innerHTML));
+        suggestedStock.innerHTML += arr[i].substring(inputDiv.value.length);
+        /*insert a input field that will hold the current array item's value:*/
+        suggestedStock.innerHTML += "<input type='hidden' value='" + arr[i] + "'>";
+        /*execute a function when someone clicks on the item value (DIV element):*/
+        suggestedStock.addEventListener("click", function (e) {
+            /*insert the value for the autocomplete text field:*/
+            console.log(parseSymbolForQuote(e.target.getElementsByTagName("input")[0].value))
+            inputDiv.value = e.target.getElementsByTagName("input")[0].value;
 
-                /*close the list of autocompleted values,
-                (or any other open lists of autocompleted values:*/
-                closeAllLists(inputDiv);
-            });
-            wrapper.appendChild(suggestedStock);
-        }
+            /*close the list of autocompleted values,
+            (or any other open lists of autocompleted values:*/
+            closeAllLists(inputDiv);
+        });
+        wrapper.appendChild(suggestedStock);
     }
 }
 
@@ -126,11 +133,11 @@ const addArrowKeySelection = (inputDiv) => {
     }
 }
 
-
 document.addEventListener("click", function (e) {
     closeAllLists(e.target);
 });
-requestStockForm.addEventListener('submit', function(event){
+
+requestStockForm.addEventListener('submit', function (event) {
     event.preventDefault();
     console.log(`poop ${inputDiv.value}`)
     inputDiv.value = parseSymbolForQuote(inputDiv.value);
