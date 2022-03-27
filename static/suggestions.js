@@ -1,6 +1,7 @@
 // const host = `https://finance-nccixsmlaa-lm.a.run.app`
-const host = `http://34.116.183.147:5000`
+// const host = `http://34.116.183.147:5000`
 // const host = `http://localhost:5000`
+const host = `https://cs50finance.agilecat.io/`
 const suggestionsEndpoint = (phrase) => `${host}/suggestions?phrase=${phrase.toUpperCase()}`
 const inputDiv = document.getElementById("myInput")
 const requestStockForm = document.getElementById("stock form")
