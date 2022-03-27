@@ -46,6 +46,10 @@ main img
     max-width: 100%;
 }
 
+#myInput{
+    width: 20vw;
+}
+
 .autocomplete {
   /*the container must be positioned relative:*/
   position: relative;
