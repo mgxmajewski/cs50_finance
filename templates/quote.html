@@ -5,15 +5,24 @@
 {% endblock %}
 
 {% block main %}
-<main class="container p-5">
-    <form id="stock form" class="row g-3 d-flex justify-content-center" action="/quote" method="post">
-        <div class="col-5">
-            <input id="myInput" autocomplete="off" autofocus="" class="form-control" name="symbol" placeholder="Symbol" type="text">
-        </div>
-        <div class="col-auto">
-            <button class="btn btn-primary mb-3" type="submit">Quote</button>
-        </div>
-    </form>
-</main>
-    <script src="{{url_for('static', filename='suggestions.js')}}"></script>
+    <main class="container p-5">
+        <form id="stock form" class="row g-3 d-flex justify-content-center" action="/quote" method="post">
+            <div class="col-5">
+                <label for="myInput"></label>
+                <input
+                        id="myInput"
+                        autocomplete="off"
+                        autofocus=""
+                        class="form-control"
+                        name="symbol"
+                        placeholder="Stock ticker symbol or company name"
+                        type="text"
+                >
+            </div>
+            <div class="col-auto">
+                <button class="btn btn-primary mb-3" type="submit">Quote</button>
+            </div>
+        </form>
+    </main>
+    <script src="{{ url_for('static', filename='suggestions.js') }}"></script>
 {% endblock %}
