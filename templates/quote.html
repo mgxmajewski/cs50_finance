@@ -5,24 +5,23 @@
 {% endblock %}
 
 {% block main %}
-    <main class="container p-5">
-        <form id="stock form" class="row g-3 d-flex justify-content-center" action="/quote" method="post">
-            <div class="col-5">
-                <label for="myInput"></label>
+    <form id="stock form" action="/quote" method="post">
+        <div class="form-row align-items-center justify-content-center">
+            <div class="col-auto my-1">
                 <input
                         id="myInput"
                         autocomplete="off"
                         autofocus=""
                         class="form-control"
                         name="symbol"
-                        placeholder="Stock ticker symbol or company name"
+                        placeholder="Ticker symbol or company name"
                         type="text"
                 >
             </div>
-            <div class="col-auto">
-                <button class="btn btn-primary mb-3" type="submit">Quote</button>
+            <div class="col-auto my-1">
+                <button class="btn btn-primary" type="submit">Quote</button>
             </div>
-        </form>
-    </main>
+        </div>
+    </form>
     <script src="{{ url_for('static', filename='suggestions.js') }}"></script>
 {% endblock %}
