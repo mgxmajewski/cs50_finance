@@ -22,9 +22,8 @@ nav .navbar-brand .green {
 
 /*CUSTOM - core application*/
 
-html{
+html {
     scrollbar-gutter: stable both-edges;
-    min-height: 1500px;
 }
 
 table {
@@ -33,7 +32,7 @@ table {
 
 @media (min-width: 576px) {
     table {
-        font-size: 1.4rem;
+        font-size: 1.4em;
     }
 }
 
@@ -42,9 +41,13 @@ main img {
     max-width: 100%;
 }
 
-.jumbotron{
+.jumbotron {
     max-width: 800px;
     margin: auto;
+}
+
+.suggestions-spacer{
+    min-height: 160px;
 }
 
 /*CUSTOM - stock lookup feature*/
@@ -70,7 +73,11 @@ main img {
 /*  color: #fff;*/
 /*}*/
 .autocomplete-items {
+    font-size: 0.7em;
+    text-align: left;
     position: absolute;
+    min-width: 300px;
+    word-wrap: break-word;
     border: 1px solid #d4d4d4;
     border-bottom: none;
     border-top: none;
@@ -80,6 +87,13 @@ main img {
     left: 0;
     right: 0;
 }
+
+@media (min-width: 576px) {
+    .autocomplete-items {
+        font-size: 1em;
+    }
+}
+
 
 .autocomplete-items div {
     padding: 10px;
