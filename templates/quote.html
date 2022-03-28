@@ -5,6 +5,8 @@
 {% endblock %}
 
 {% block main %}
+    <h3>Quote for stock price.</h3>
+    <p>You can enter ticker symbol or company name. All available via IEX API stocks are downloaded to db, so you can look up names really fast. After you choose stock you are interested in after you click <strong>"Quote"</strong> button the most current price will be fetched for you.</p>
     <form id="stock form" action="/quote" method="post">
         <div class="form-row align-items-center justify-content-center">
             <div class="col-auto my-1">
