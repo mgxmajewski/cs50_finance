@@ -24,11 +24,10 @@ def suggestions():
                                      "ASC LIMIT 3",
                                      '%' + phrase_regex + '%')
 
-    print(type(company_name_result))
-    # merged_result = list(set(company_name_result).union(set(symbol_result)))
-    merged_result = company_name_result + [suggestion for suggestion
-                                           in symbol_result if suggestion not in company_name_result]
-
-    merged_result = company_name_result+symbol_result
+    merged_result = []
+    symbol_result.extend(company_name_result)
+    for suggestion_from_db in symbol_result:
+        if suggestion_from_db not in merged_result:
+            merged_result.append(suggestion_from_db)
 
     return jsonify(merged_result)
