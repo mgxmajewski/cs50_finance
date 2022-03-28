@@ -24,6 +24,7 @@ nav .navbar-brand .green {
 
 html{
     scrollbar-gutter: stable both-edges;
+    min-height: 1500px;
 }
 
 table {
