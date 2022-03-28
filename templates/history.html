@@ -5,26 +5,27 @@
 {% endblock %}
 
 {% block main %}
-  <table class="table table-striped justify-content-center">
-      <thead>
+    <h3>History of your transactions</h3>
+    <table class="table table-striped table-hover justify-content-center">
+        <thead>
         <tr>
-          <th>Symbol</th>
-          <th>Name</th>
-          <th>Shares</th>
-          <th>Price</th>
-          <th>Date</th>
+            <th>Symbol</th>
+            <th>Name</th>
+            <th>Shares</th>
+            <th>Price</th>
+            <th>Date</th>
         </tr>
-      </thead>
-      <tbody>
+        </thead>
+        <tbody>
         {% for transaction in user_history %}
-        <tr>
-          <td>{{transaction['symbol']}}</td>
-          <td>{{transaction['company_name']}}</td>
-          <td>{{transaction['shares']}}</td>
-          <td>${{transaction['price']}}</td>
-          <td>{{transaction['timestamp']}}</td>
-        </tr>
+            <tr>
+                <td>{{ transaction['symbol'] }}</td>
+                <td>{{ transaction['company_name'] }}</td>
+                <td>{{ transaction['shares'] }}</td>
+                <td>${{ transaction['price'] }}</td>
+                <td>{{ transaction['timestamp'] }}</td>
+            </tr>
         {% endfor %}
-      </tbody>
-  </table>
+        </tbody>
+    </table>
 {% endblock %}
