@@ -22,6 +22,10 @@ nav .navbar-brand .green {
 
 /*CUSTOM - core application*/
 
+html{
+    scrollbar-gutter: stable both-edges;
+}
+
 table {
     font-size: 0.75rem;
 }
