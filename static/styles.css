@@ -32,10 +32,14 @@ table {
     }
 }
 
-
 main img {
     /* Constrain images on small screens */
     max-width: 100%;
+}
+
+.jumbotron{
+    max-width: 800px;
+    margin: auto;
 }
 
 /*CUSTOM - stock lookup feature*/

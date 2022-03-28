@@ -6,46 +6,31 @@
 
 {% block main %}
     <div class="jumbotron">
-  <h3 class="display-4">Quote for stock price.</h3>
-  <p class="lead">All available stocks available at IEX API were downloaded to the C$50finance database (with use of Talend Studio - ETL software). You can look up for stocks fast. After you choose the stock you are interested in after you click the "Quote" button the most current price will be fetched for you.</p>
-  <hr class="my-4">
-  <p>You can enter a ticker symbol (for ex. AAPL for Apple Inc) or just the company name if you don't know the ticker.  </p>
-  <form id="stock form" action="/quote" method="post">
-        <div class="form-row align-items-center justify-content-center">
-            <div class="col-auto my-1">
-                <input
-                        id="myInput"
-                        autocomplete="off"
-                        autofocus=""
-                        class="form-control"
-                        name="symbol"
-                        placeholder="Stock name"
-                        type="text"
-                >
+        <h1 class="display-4">Quote for stock price.</h1>
+        <p class="lead">All available stocks available at IEX API were downloaded to the C$50finance database (with
+            use of Talend Studio - ETL software). You can look up for stocks fast. After you choose the stock you
+            are interested in after you click the "Quote" button the most current price will be fetched for you.</p>
+        <hr class="my-4">
+        <p>You can enter a ticker symbol (for ex. AAPL for Apple Inc) or just the company name if you don't know the
+            ticker.</p>
+        <form id="stock form" action="/quote" method="post">
+            <div class="form-row align-items-center justify-content-center">
+                <div class="col-auto my-1">
+                    <input
+                            id="myInput"
+                            autocomplete="off"
+                            autofocus=""
+                            class="form-control"
+                            name="symbol"
+                            placeholder="Stock name"
+                            type="text"
+                    >
+                </div>
+                <div class="col-auto my-1">
+                    <button class="btn btn-primary" type="submit">Quote</button>
+                </div>
             </div>
-            <div class="col-auto my-1">
-                <button class="btn btn-primary" type="submit">Quote</button>
-            </div>
-        </div>
-    </form>
-</div>
-{#    <form id="stock form" action="/quote" method="post">#}
-{#        <div class="form-row align-items-center justify-content-center">#}
-{#            <div class="col-auto my-1">#}
-{#                <input#}
-{#                        id="myInput"#}
-{#                        autocomplete="off"#}
-{#                        autofocus=""#}
-{#                        class="form-control"#}
-{#                        name="symbol"#}
-{#                        placeholder="Stock name"#}
-{#                        type="text"#}
-{#                >#}
-{#            </div>#}
-{#            <div class="col-auto my-1">#}
-{#                <button class="btn btn-primary" type="submit">Quote</button>#}
-{#            </div>#}
-{#        </div>#}
-{#    </form>#}
+        </form>
+    </div>
     <script src="{{ url_for('static', filename='suggestions.js') }}"></script>
 {% endblock %}
