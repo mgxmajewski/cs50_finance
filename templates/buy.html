@@ -6,13 +6,15 @@
 
 {% block main %}
     <div class="jumbotron">
-        <h1 class="display-4">Buy stocks in the real time prices!</h1>
-        <p class="lead">C$50finance will use EIX AIP to calculate purchase value of transaction you want to make on the
-            stock market. Your transaction will be held in the database, so later you can track your portfolio value in
-            time.</p>
+        <h1 class="display-4">Buy stocks at real-time prices!</h1>
+        <p class="lead">
+            C$50finance will use EIX AIP to calculate the purchase value of the transaction you want to make on the
+            stock market. The application will record your transaction in the database so you can track the value of
+            your portfolio in time.
+        </p>
         <hr class="my-4">
-        <p>You can enter a ticker symbol (for ex. AAPL for Apple Inc) or just the company name if you don't know the
-            ticker of the stock you want and amount of shares to buy.</p>
+        <p>Enter the number of shares you want to buy and a ticker symbol (for ex. AAPL for Apple Inc) or just the company name if you don't know the ticker.
+        </p>
         <form id="stock form" novalidate action="/buy" method="post">
             <div class="form-row align-items-center justify-content-center">
                 <div class="col-auto my-1">
