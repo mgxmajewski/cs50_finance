@@ -15,9 +15,17 @@
                     {% endfor %}
                 </select>
             </div>
-            <div class="col-auto my-1">
-                <input autocomplete="off" autofocus class="form-control" name="shares" placeholder="Shares"
-                       type="number">
+            <div class="col-2 my-1">
+                <input
+                        id="sell-number-of-shares"
+                        value="1"
+                        autocomplete="off"
+                        autofocus class="form-control"
+                        name="shares"
+                        placeholder="# of Shares"
+                        type="number"
+                        min="1"
+                >
             </div>
             <div class="col-auto my-1">
                 <button class="btn btn-primary" type="submit">Sell</button>

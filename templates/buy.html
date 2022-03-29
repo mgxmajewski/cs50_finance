@@ -13,28 +13,31 @@
             your portfolio in time.
         </p>
         <hr class="my-4">
-        <p>Enter the number of shares you want to buy and a ticker symbol (for ex. AAPL for Apple Inc) or just the company name if you don't know the ticker.
+        <p>Enter the number of shares you want to buy and a ticker symbol (for ex. AAPL for Apple Inc) or just the
+            company name if you don't know the ticker.
         </p>
         <form id="stock form" novalidate action="/buy" method="post">
             <div class="form-row align-items-center justify-content-center">
                 <div class="col-auto my-1">
                     <input
-                            id="myInput"
-                            autocomplete="off"
-                            autofocus
-                            class="form-control"
-                            name="symbol"
-                            placeholder="Stock name"
-                            type="text">
+                        id="buy-ticker-symbol"
+                        autocomplete="off"
+                        autofocus
+                        class="form-control"
+                        name="symbol"
+                        placeholder="Stock name"
+                        type="text">
                 </div>
-                <div class="col-3 my-1">
+                <div class="col-2 my-1">
                     <input
+                            id="buy-number-of-shares"
+                            value="1"
                             autocomplete="off"
                             autofocus class="form-control"
                             name="shares"
-                            placeholder="Shares"
+                            placeholder="# of Shares"
                             type="number"
-                            min="0"
+                            min="1"
                     >
                 </div>
                 <div class="col-auto my-1">
