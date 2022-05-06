@@ -112,3 +112,7 @@ main img {
     background-color: DodgerBlue !important;
     color: #ffffff;
 }
+
+.nav-link--inline {
+    display: inline-block;
+}
