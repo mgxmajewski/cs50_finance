@@ -3,7 +3,7 @@
 const host = `http://localhost:5000`
 // const host = `https://cs50finance.agilecat.io`
 const suggestionsEndpoint = (phrase) => `${host}/suggestions?phrase=${phrase.toUpperCase()}`
-const inputDiv = document.getElementById("myInput")
+const inputDiv = document.getElementById("stockNameInput")
 const requestStockForm = document.getElementById("stock form")
 
 // Handle fetch request
