@@ -5,6 +5,15 @@
 {% endblock %}
 
 {% block main %}
+    <div class="jumbotron">
+        <h1 class="display-4">Welcome to C$50 finance!</h1>
+        <p class="lead">
+            If you ever wondered if you could make money by trading stocks here is the right place to try yourself out.
+        </p>
+        <hr class="my-4">
+        <p>
+            Provide you details and start to trading now.
+        </p>
     <form action="/register" method="post">
         <div class="mb-3">
             <input autocomplete="off" autofocus class="form-control mx-auto w-auto" name="username"
@@ -26,4 +35,5 @@
         </div>
         <button class="btn btn-primary" type="submit">Register</button>
     </form>
+    </div>
 {% endblock %}
