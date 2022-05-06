@@ -115,4 +115,5 @@ main img {
 
 .nav-link--inline {
     display: inline-block;
+    padding: 0;
 }
